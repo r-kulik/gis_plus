@@ -8,8 +8,9 @@ class Fields(models.Model):  # Corrected from models.model to models.Model
     fieldId = models.AutoField(primary_key=True)
     fieldName = models.TextField()
 
-class Locations(models.Model):
-    locationId = models.AutoField(primary_key=True)
+class Wells(models.Model):
+    wellId = models.AutoField(primary_key=True)
+    wellNumber = models.TextField()
     field = models.ForeignKey(to=Fields, on_delete=models.CASCADE)
 
 class CurveMetrics(models.Model):
@@ -26,5 +27,5 @@ class Files(models.Model):
     stopDepth = models.FloatField()
     datetime = models.DateTimeField()
     company = models.ForeignKey(to=Companies, on_delete=models.CASCADE)
-    location = models.ForeignKey(to=Locations, on_delete=models.CASCADE)
+    well = models.ForeignKey(to=Wells, on_delete=models.CASCADE)
     metrics = models.ManyToManyField(CurveMetrics)

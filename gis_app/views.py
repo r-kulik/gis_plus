@@ -3,63 +3,54 @@ from django.http import HttpResponse, HttpRequest, JsonResponse # type: ignore
 from django.views.decorators.csrf import csrf_exempt # type: ignore
 import os
 import random
-import string
-from datetime import datetime
-from .models import Companies, Fields, Locations, CurveMetrics, Files
+from faker import Faker
+from django.utils import timezone
+from .models import Companies, Fields, Wells, CurveMetrics, Files
 
 
 def hello_world(request):
-    
+    fake = Faker("ru_RU")
 
-    def random_string(length=10):
-        return ''.join(random.choice(string.ascii_letters) for _ in range(length))
+    def create_dummy_companies(num_companies=10):
+        for _ in range(num_companies):
+            Companies.objects.create(companyName=fake.company())
 
-    def random_number(start=0, end=100):
-        return random.uniform(start, end)
+    def create_dummy_fields(num_fields=5):
+        for _ in range(num_fields):
+            Fields.objects.create(fieldName=fake.city())
 
-    def create_dummy_data():
-        # Create dummy Companies
-        company1 = Companies.objects.create(companyName=random_string())
-        company2 = Companies.objects.create(companyName=random_string())
+    def create_dummy_wells(num_wells=20):
+        fields = Fields.objects.all()
+        for _ in range(num_wells):
+            Wells.objects.create(wellNumber=fake.numerify(text='WELL-####'), field=random.choice(fields))
 
-        # Create dummy Fields
-        field1 = Fields.objects.create(fieldName=random_string())
-        field2 = Fields.objects.create(fieldName=random_string())
+    def create_dummy_curve_metrics(num_metrics=10):
+        for _ in range(num_metrics):
+            CurveMetrics.objects.create(metricName=fake.job())
 
-        # Create dummy Locations
-        location1 = Locations.objects.create(field=field1)
-        location2 = Locations.objects.create(field=field2)
+    def create_dummy_files(num_files=30):
+        companies = Companies.objects.all()
+        wells = Wells.objects.all()
+        metrics = CurveMetrics.objects.all()
+        for _ in range(num_files):
+            file = Files.objects.create(
+                filePath=fake.file_path(depth=3, category='text'),
+                fileVersion=fake.numerify(text='v%#.##'),
+                startDepth=random.uniform(100, 1000),
+                stopDepth=random.uniform(1000, 5000),
+                datetime=fake.date_time_this_decade(before_now=True, after_now=False, tzinfo=timezone.get_current_timezone()),
+                company=random.choice(companies),
+                well=random.choice(wells)
+            )
+            file.metrics.set(random.sample(list(metrics), random.randint(1, 5)))
 
-        # Create dummy CurveMetrics
-        metric1 = CurveMetrics.objects.create(metricName=random_string())
-        metric2 = CurveMetrics.objects.create(metricName=random_string())
-
-        # Create dummy Files
-        file1 = Files.objects.create(
-            filePath=random_string(),
-            fileVersion=random_string(5),
-            startDepth=random_number(),
-            stopDepth=random_number(),
-            datetime=datetime.now(),
-            company=company1,
-            location=location1
-        )
-        file1.metrics.add(metric1, metric2)
-
-        file2 = Files.objects.create(
-            filePath=random_string(),
-            fileVersion=random_string(5),
-            startDepth=random_number(),
-            stopDepth=random_number(),
-            datetime=datetime.now(),
-            company=company2,
-            location=location2
-        )
-        file2.metrics.add(metric1)
-
-    # Call the function to create dummy data
-    create_dummy_data()
-        
+    def populate_database():
+        create_dummy_companies()
+        create_dummy_fields()
+        create_dummy_wells()
+        create_dummy_curve_metrics()
+        create_dummy_files()
+    populate_database()
     return HttpResponse("Hello, World!")
 
 
