@@ -10,20 +10,21 @@
 <body>
 
     <header>
-        <div class="header-container">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2uOtw4ij2tlbCScTQHIgFqqlwdbLpgnxV3A&s" alt="Gazprom-logo" class="gazprom-logo">
-            <h1>Import Files</h1>
-            <button class="button">Импорт файлов</button>
-            <button class="button">Экспорт файлов</button>
-
-        </div>
+        <nav class="header-container">
+            <img src="https://cdn.freebiesupply.com/logos/large/2x/gazprom-6-logo-black-and-white.png" alt="Gazprom-logo" class="gazprom-logo">
+            <button class="page-selection-button-active">Импорт файлов</button>
+            <button class="page-selection-button">Экспорт файлов</button>
+        </nav>
     </header>
 
-    <input class ="file-button" type="file" id="fileInput" multiple>
-    <button class="upload-button" id="uploadButton">Upload Files</button>
-    
-    <table id="fileTable">
-        <table>
+
+    <main class="content">
+        <!-- отобразить выбранные файлы -->
+        <label for="fileInput" class="file-button">Выбрать файлы</label>
+        <input style="visibility:hidden;" type="file" id="fileInput" multiple>
+        <button class="upload-button" id="uploadButton">Загрузить файлы</button>
+        
+        <table id="fileTable">
             <thead>
                 <tr>
                     <th>File Name</th>
@@ -32,6 +33,7 @@
                     <th>Content</th>
                 </tr>
             </thead>
+
             <tbody>
                 <tr>
                     <td>John Doe</td>
@@ -40,14 +42,8 @@
                     <td>dd</td>
                 </tr>
             </tbody>
+
         </table>
-        
-        <thead>
-            <tr>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+    </main>
 </body>
 </html>
