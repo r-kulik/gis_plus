@@ -14,26 +14,58 @@ header {
 }
 
 table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.625em; /* 10px */
+}
+
+table td {
+    padding: 0.625em; /* 10px */
+    border: 0.0625em solid #ccc; /* 1px */
+}
+
+h2 {
+    margin: 0 0 0.625em; /* 10px */
+    font-size: 1.5em; /* 24px */
+    color: #333;
+}
+
+input[type="text"],
+input[list] {
+    width: 100%;
+    padding: 0.5em; /* 8px */
+    box-sizing: border-box;
+    border: 0.0625em solid #ccc; /* 1px */
+    border-radius: 0.25em; /* 4px */
+    font-size: 1em; /* 16px */
+}
+
+input[type="text"]:focus,
+input[list]:focus {
+    border-color: #008fff;
+    outline: none;
+    box-shadow: 0 0 0.3125em rgba(102, 175, 233, 0.5); /* 5px */
+}
+
+.filter-row {
+    align-items: center;
+}
+
+.filter-row span {
+    margin: auto 0.3125em;
+}
+
+.filter-block {
+    background-color: #fff;
+    padding: 1.25em; /* 20px */
+    border-radius: 0.5em; /* 8px */
+    box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.1); /* 10px */
+    margin: 1em auto;
+}
+
+.lasFilesTable {
     width: 45%;
     border-collapse: collapse;
-}
-
-th, td {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
-
-th {
-    background-color: #f2f2f2;
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-tr:hover {
-    background-color: #f1f1f1;
 }
 
 .content {
@@ -57,15 +89,16 @@ tr:hover {
 .page-selection-button {
     padding: 10px 20px;
     margin-left: 10px;
-    background-color: #007bff;
+    background-color: #2994E8;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.5s ease
 }
 
 .page-selection-button:hover {
-    background-color: #0056b3;
+    background-color: #006BC0;
 }
 
 .page-selection-button-active {
@@ -76,10 +109,48 @@ tr:hover {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.5s ease
 }
 
 .page-selection-button-active:hover {
-    background-color: #a1a1a0;
+    background-color: #cdcdcd;
+}
+
+.file-input-tag {
+    display: none;
+}
+
+.cont {
+    display: flex;
+}
+
+.search-button {
+    display: inline-block;
+    padding: 12px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    text-decoration: none;
+    color: white;
+    background-color: #2994E8;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.5s ease;
+}
+
+.export-button {
+    display: inline-block;
+    float: right;
+    padding: 12px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    text-decoration: none;
+    color: white;
+    background-color: #2994E8;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.5s ease;
 }
 
 .file-button, .upload-button {
@@ -87,33 +158,13 @@ tr:hover {
     margin-bottom: 1em;
     font-size: 16px;
     color: white;
-    background-color: #007bff;
+    background-color: #2994E8;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.5s ease;
 }
 
-.file-button {
-    background-color: #28a745;
-}
-
-.file-button:hover {
-    background-color: #218838;
-}
-
-.file-button:active {
-    background-color: #1e7e34;
-}
-
-.upload-button {
-    background-color: #17a2b8;
-}
-
-.upload-button:hover {
-    background-color: #138496;
-}
-
-.upload-button:active {
-    background-color: #117a8b;
+.file-button:hover, .upload-button:hover {
+    background-color: #006BC0;
 }

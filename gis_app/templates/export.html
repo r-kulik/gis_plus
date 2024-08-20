@@ -34,59 +34,87 @@
             <button class="page-selection-button">Импорт файлов</button>
             <button class="page-selection-button-active">Экспорт файлов</button>
         </nav>
-    </header>
-
-
-
-
-    <div class="filter-block">
-        <h2>Filters</h2>
-        <label>
-            <input type="text" class="file-filter" id="fileFilter">Название файла
-        </label>
-        <label>
-            <input type="text" class="field-filter" id="fieldFilter">Месторождение
-        </label>
-        <label>
-            <input type="text" class="well-number-filter" id="wellNumberFilter">Номер скважины
-        </label>
-        <label>
-            <input type="text" class="start-measure-from-depth-filter" id="startMeasureFromDepthFilter">Начало измерения с глубины
-        </label>
-        <label>
-            <input type="text" class="finish-measure-from-depth-filter" id="finishMeasureFromDepthFilter">Начало измерения до глубины
-        </label>
-        <label>
-            <input type="text" class="start-measure-till-depth-filter" id="startMeasureTillDepthFilter">Конец измерения до глубины
-        </label>
-        <label>
-            <input type="text" class="finish-measure-till-depth-filter" id="finishMeasureTillDepthFilter">Конец измерения до глубины
-        </label>
-        <label>
-            <input type="text" class="companies-filter" id="companiesFilter">Компания
-        </label>
-        <label>
-            <input type="text" class="metrics-filter" id="metricsFilter">Метрики
-        </label>
-        <label>
-            <input type="text" class="start-year-filter" id="startYearFilter">С года
-        </label>
-        <label>
-            <input type="text" class="finish-year-filter" id="finishYearFilter">До года
-        </label>
-    </div>
-
-
-
-
-
+    </header>  
+    
     <main class="content">
+
+        <div class="filter-block">
+            <button class="search-button" id="searchButton">Найти</button>
+            <button class="search-button" id="clearButton">Очистить</button>
+            <button class="export-button" id="exportButton">Экспортировать</button>
+
+            <table>
+                <!-- Исправить ширину. Двойные поля должны подстраиваться под ширину одинарного -->
+
+                <tr>
+                    <td>
+                        <input type="text" class="file-filter" id="fileFilter" placeholder="Название файла">
+                    </td>
+
+                    <td>
+                        <input list="fieldFilterList"  class="field-filter" id="fieldFilter" placeholder="Месторождение">
+                        <datalist id="fieldFilterList">
+                        </datalist>
+                    </td>
+
+                    <td>
+                        <input list="wellNumberFilterList"  class="well-number-filter" id="wellNumberFilter" placeholder="Номер скважины">
+                        <datalist id="wellNumberFilterList">
+                        </datalist>
+                    </td>
+
+                    <td>
+                        <div class="filter-row" style="display: flex;">
+                            <input type="text" class="start-measure-from-depth-filter" id="startMeasureFromDepthFilter" placeholder="Начало измерения с глубины">
+                            <span>-</span>
+                            <input type="text" class="finish-measure-from-depth-filter" id="finishMeasureFromDepthFilter" placeholder="Начало измерения до глубины">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="filter-row" style="display: flex;">
+                            <input type="text" class="start-measure-till-depth-filter" id="startMeasureTillDepthFilter" placeholder="Конец измерения c глубины">
+                            <span>-</span>
+                            <input type="text" class="finish-measure-till-depth-filter" id="finishMeasureTillDepthFilter" placeholder="Конец измерения до глубины">
+                        </div>
+                    </td>
+
+                    <td>
+                        <input list="companiesList"  class="companies-filter" id="companiesFilter" placeholder="Компания">
+                        <datalist id="companiesList">
+                        </datalist>
+                    </td>
+
+                    <td>
+                        <input list="metricsList"  class="metrics-filter" id="metricsFilter" placeholder="Метрики">
+                        <datalist id="metricsList">
+                            <!--- <option value="pp1"> -->
+                        </datalist>
+                    </td>
+
+                    <td>
+                        <div class="filter-row" style="display: flex;">
+                            <input type="text" class="start-year-filter" id="startYearFilter" placeholder="С года">
+                            <span>-</span>
+                            <input type="text" class="finish-year-filter" id="finishYearFilter" placeholder="До года">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
         
-        <button class="upload-button" id="uploadButton">Экспортировать файлы</button>
-        
-        <table id="fileTable">
+        <table class="lasFilesTable" id="fileTable">
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Size</th>
+                    <th>Type</th>
+                    <th>Content</th>
+                </tr>
+            </thead>
+
             <tbody>
-                
             </tbody>
         </table>
     </main>

@@ -56,6 +56,6 @@ $(document).ready(
     () => {
         console.log($.fn.jquery); // Check jQuery version
         console.log(typeof $.tmpl); // Check if $.tmpl is defined
-        $('#uploadButton').on('click', sendRequestToGetFiles)
+        $('#searchButton').on('click', sendRequestToGetFiles)
     }
 );

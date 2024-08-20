@@ -98,6 +98,8 @@ def exportFiles(request: HttpRequest) -> HttpResponse:
 
 
         query = Q()
+
+        # TODO: Сделать так, чтобы файлы и прочие хитрости, как и метрики можно было вводить через запятую
         if file_filter:
             query &= Q(filePath__icontains=file_filter)
         if field_filter:
