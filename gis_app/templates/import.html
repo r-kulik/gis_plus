@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Import Files</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+
+    <h1>Import Files</h1>
+    <input type="file" id="fileInput" multiple>
+    <button id="uploadButton">Upload Files</button>
+    <table id="fileTable">
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>Size</th>
+                <th>Type</th>
+                <th>Content</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+            $('#uploadButton').click(function() {
+                var formData = new FormData();
+                $.each($('#fileInput')[0].files, function(i, file) {
+                    formData.append('files', file);
+                });
+
+                $.ajax({
+                    url: '{% url "upload" %}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        $.each(data.files, function(i, file) {
+                            $('#fileTable tbody').append(
+                                `<tr>
+                                    <td>${file.name}</td>
+                                    <td>${file.size}</td>
+                                    <td>${file.type}</td>
+                                    <td><a href="${file.path}" target="_blank">View</a></td>
+                                </tr>`
+                            );
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
