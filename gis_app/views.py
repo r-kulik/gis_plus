@@ -59,6 +59,11 @@ def import_view(request: HttpRequest) -> HttpResponse:
         request, 'import.html'
     )
 
+def export_view(request: HttpRequest) -> HttpResponse:
+    return render(
+        request, 'export.html'
+    )
+
 @csrf_exempt
 def upload_file(request):
 

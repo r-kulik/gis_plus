@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Export Files</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'import_scripts.js' %}"></script>
+</head>
+<body>
+
+    <header>
+        <nav class="header-container">
+            <img src="https://cdn.freebiesupply.com/logos/large/2x/gazprom-6-logo-black-and-white.png" alt="Gazprom-logo" class="gazprom-logo">
+            <button class="page-selection-button">Импорт файлов</button>
+            <button class="page-selection-button-active">Экспорт файлов</button>
+        </nav>
+    </header>
+
+
+
+
+    <div class="filter-block">
+        <h2>Filters</h2>
+        <label>
+            <input type="text" class="well-title-filter" id="wellTitleFilter">Название скважены
+        </label>
+        <label>
+            <input type="text" class="field-filter" id="fieldFilter">Месторождение
+        </label>
+        <label>
+            <input type="text" class="well-number-filter" id="wellNumberFilter">Номер скважены
+        </label>
+        <label>
+            <input type="text" class="start-depth-filter" id="startDepthFilter">С глубины
+        </label>
+        <label>
+            <input type="text" class="finish-depth-filter" id="finishDepthFilter">До глубины
+        </label>
+        <label>
+            <input type="text" class="companies-filter" id="companiesFilter">Компания
+        </label>
+        <label>
+            <input type="text" class="metrics-filter" id="metricsFilter">Метрики
+        </label>
+        <label>
+            <input type="text" class="start-year-filter" id="startYearFilter">С года
+        </label>
+        <label>
+            <input type="text" class="finish-year-filter" id="finishYearFilter">До года
+        </label>
+    </div>
+
+
+
+
+
+    <main class="content">
+        
+        <button class="upload-button" id="uploadButton">Экспортировать файлы</button>
+        
+        <table id="fileTable">
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Size</th>
+                    <th>Type</th>
+                    <th>Content</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>28</td>
+                    <td>New York</td>
+                    <td>dd</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>
