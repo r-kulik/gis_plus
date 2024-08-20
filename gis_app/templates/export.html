@@ -6,9 +6,27 @@
     <title>Export Files</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
     <script src="{% static 'export_scripts.js' %}"></script>
 </head>
 <body>
+
+    <script type="text/x-jquery-tmpl" id="fileRowTemplate">
+        <tr>
+            <td>${fileId}</td>
+            <td>${filePath}</td>
+            <td>${fileVersion}</td>
+            <td>${startDepth}</td>
+            <td>${stopDepth}</td>
+            <td>${datetime}</td>
+            <td>${companyName}</td>
+            <td>${wellNumber}</td>
+            <td>${fieldName}</td>
+            <td>${metrics}</td>
+        </tr>
+    </script>
+
+
 
     <header>
         <nav class="header-container">
@@ -36,13 +54,13 @@
             <input type="text" class="start-measure-from-depth-filter" id="startMeasureFromDepthFilter">Начало измерения с глубины
         </label>
         <label>
-            <input type="text" class="finish-measure-from-depth-filter" id="finishMeasureFromDepthDepthFilter">Начало измерения до глубины
+            <input type="text" class="finish-measure-from-depth-filter" id="finishMeasureFromDepthFilter">Начало измерения до глубины
         </label>
         <label>
-            <input type="text" class="start-measure-till-depth-filter" id="startMeasureTillDepthDepthFilter">Конец измерения до глубины
+            <input type="text" class="start-measure-till-depth-filter" id="startMeasureTillDepthFilter">Конец измерения до глубины
         </label>
         <label>
-            <input type="text" class="finish-measure-till-depth-filter" id="finishMeasureTillDepthDepthFilter">Конец измерения до глубины
+            <input type="text" class="finish-measure-till-depth-filter" id="finishMeasureTillDepthFilter">Конец измерения до глубины
         </label>
         <label>
             <input type="text" class="companies-filter" id="companiesFilter">Компания
@@ -67,22 +85,8 @@
         <button class="upload-button" id="uploadButton">Экспортировать файлы</button>
         
         <table id="fileTable">
-            <thead>
-                <tr>
-                    <th>File Name</th>
-                    <th>Size</th>
-                    <th>Type</th>
-                    <th>Content</th>
-                </tr>
-            </thead>
-
             <tbody>
-                <tr>
-                    <td>John Doe</td>
-                    <td>28</td>
-                    <td>New York</td>
-                    <td>dd</td>
-                </tr>
+                
             </tbody>
         </table>
     </main>

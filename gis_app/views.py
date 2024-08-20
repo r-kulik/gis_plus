@@ -6,6 +6,7 @@ import random
 from faker import Faker
 from django.utils import timezone
 from .models import Companies, Fields, Wells, CurveMetrics, Files
+from django.db.models import Q, Count
 
 
 def hello_world(request):
@@ -63,6 +64,124 @@ def export_view(request: HttpRequest) -> HttpResponse:
     return render(
         request, 'export.html'
     )
+
+def exportFiles(request: HttpRequest) -> HttpResponse:
+    if request.method == 'GET':
+        file_filter = request.GET.get('fileFilter', None)
+        field_filter = request.GET.get('fieldFilter', None)
+        well_number_filter = request.GET.get('wellNumberFilter', None)
+        start_measure_from_depth_filter = request.GET.get('startMeasureFromDepthFilter', None)
+        finish_measure_from_depth_filter = request.GET.get('finishMeasureFromDepthDepthFilter', None)
+        start_measure_till_depth_filter = request.GET.get('startMeasureTillDepthDepthFilter', None)
+        finish_measure_till_depth_filter = request.GET.get('finishMeasureTillDepthDepthFilter', None)
+        companies_filter = request.GET.get('companiesFilter', None)
+        metrics_filter = request.GET.get('metricsFilter', )
+        start_year_filter = request.GET.get('startYearFilter', None)
+        finish_year_filter = request.GET.get('finishYearFilter', None)
+
+        def convert_to_number(value, conversion_func):
+            if value is None:
+                return None
+            try:
+                return conversion_func(value)
+            except ValueError:
+                return None
+
+        start_measure_from_depth_filter = convert_to_number(start_measure_from_depth_filter, float)
+        finish_measure_from_depth_filter = convert_to_number(finish_measure_from_depth_filter, float)
+        start_measure_till_depth_filter = convert_to_number(start_measure_till_depth_filter, float)
+        finish_measure_till_depth_filter = convert_to_number(finish_measure_till_depth_filter, float)
+
+        # Convert year filters to int if they are not None
+        start_year_filter = convert_to_number(start_year_filter, int)
+        finish_year_filter = convert_to_number(finish_year_filter, int)
+
+
+        query = Q()
+        if file_filter:
+            query &= Q(filePath__icontains=file_filter)
+        if field_filter:
+            query &= Q(well__field__fieldName__icontains=field_filter)
+        if well_number_filter:
+            query &= Q(well__wellNumber__icontains=well_number_filter)
+
+        if start_measure_from_depth_filter is not None:
+            if finish_measure_from_depth_filter is not None:
+                query &= Q(startDepth__range=(start_measure_from_depth_filter, finish_measure_from_depth_filter))
+            else:
+                query &= Q(startDepth__gte=start_measure_from_depth_filter)
+        elif finish_measure_from_depth_filter is not None:
+            query &= Q(startDepth__lte=finish_measure_from_depth_filter)
+
+        if start_measure_till_depth_filter is not None:
+            if finish_measure_till_depth_filter is not None:
+                query &= Q(stopDepth__range=(start_measure_till_depth_filter, finish_measure_till_depth_filter))
+            else:
+                query &= Q(stopDepth__gte=start_measure_till_depth_filter)
+        elif finish_measure_till_depth_filter is not None:
+            query &= Q(stopDepth__lte=finish_measure_till_depth_filter)
+
+        if companies_filter:
+            query &= Q(company__companyName__icontains=companies_filter)
+    
+
+        
+        
+        if start_year_filter is not None and finish_year_filter is not None:
+            query &= Q(datetime__year__range=(start_year_filter, finish_year_filter))
+        elif start_year_filter is not None:
+            query &= Q(datetime__year__gte=start_year_filter)
+        elif finish_year_filter is not None:
+            query &= Q(datetime__year__lte=finish_year_filter)
+        print(query)
+        
+        files = Files.objects.select_related('company', 'well__field').filter(query).distinct()
+        # files = Files.objects.select_related('company', 'well__field').prefetch_related('metrics')
+
+        
+        if metrics_filter:
+            metrics_list = [metric.strip() for metric in metrics_filter.split(',') if metric.strip()]
+    
+            if metrics_list:
+                metrics_query = Q()
+                for metric in metrics_list:
+                    metrics_query |= Q(metrics__metricName__iexact=metric)
+        
+                # Annotate the files with a count of matching metrics
+                files = Files.objects.annotate(
+                    matching_metrics_count=Count('metrics', filter=metrics_query)
+                )
+        
+                # Filter files to ensure they have all specified metrics
+                files = files.filter(matching_metrics_count=len(metrics_list))
+
+                # Combine with the main query
+                query &= Q(fileId__in=files.values_list('fileId', flat=True))
+            
+        files = files.prefetch_related('metrics').filter(query).distinct()
+        file_list = []
+        for file in files:
+            file_data = {
+                'fileId': file.fileId,
+                'filePath': file.filePath,
+                'fileVersion': file.fileVersion,
+                'startDepth': file.startDepth,
+                'stopDepth': file.stopDepth,
+                'datetime': file.datetime,
+                'companyName': file.company.companyName,
+                'wellNumber': file.well.wellNumber,
+                'fieldName': file.well.field.fieldName,
+                'metrics': [metric.metricName for metric in file.metrics.all()]
+            }
+            file_list.append(file_data)
+
+    return JsonResponse({'files': file_list})
+
+
+        
+
+
+    
 
 @csrf_exempt
 def upload_file(request):
