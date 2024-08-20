@@ -145,7 +145,7 @@ def exportFiles(request: HttpRequest) -> HttpResponse:
             if metrics_list:
                 metrics_query = Q()
                 for metric in metrics_list:
-                    metrics_query |= Q(metrics__metricName__iexact=metric)
+                    metrics_query &= Q(metrics__metricName__iexact=metric)
         
                 # Annotate the files with a count of matching metrics
                 files = Files.objects.annotate(
