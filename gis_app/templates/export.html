@@ -6,9 +6,27 @@
     <title>Export Files</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{% static 'import_scripts.js' %}"></script>
+    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+    <script src="{% static 'export_scripts.js' %}"></script>
 </head>
 <body>
+
+    <script type="text/x-jquery-tmpl" id="fileRowTemplate">
+        <tr>
+            <td>${fileId}</td>
+            <td>${filePath}</td>
+            <td>${fileVersion}</td>
+            <td>${startDepth}</td>
+            <td>${stopDepth}</td>
+            <td>${datetime}</td>
+            <td>${companyName}</td>
+            <td>${wellNumber}</td>
+            <td>${fieldName}</td>
+            <td>${metrics}</td>
+        </tr>
+    </script>
+
+
 
     <header>
         <nav class="header-container">
