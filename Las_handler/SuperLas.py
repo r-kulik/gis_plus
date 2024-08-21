@@ -55,6 +55,7 @@ class SuperLas:
                 "fieldName" : None,
                 "mnemonic_list_rus": None,
                 "mnemonic_list_eng": None,
+                "file_path": None
             }
                 
             else:
@@ -68,6 +69,7 @@ class SuperLas:
                     "fieldName" : result[2].well['FLD'].value,
                     "mnemonic_list_rus": rus,
                     "mnemonic_list_eng": eng,
+                    "file_path": new_name
                 }
                 if 'SRVC' in result[2].well.keys() and result[2].well["SRVC"].value != '':
                     features_sklad["company"] = result[2].well["SRVC"].value
@@ -82,6 +84,7 @@ class SuperLas:
                 "fieldName" : None,
                 "mnemonic_list_rus": None,
                 "mnemonic_list_eng": None,
+                "file_path": None
             }
             
             
