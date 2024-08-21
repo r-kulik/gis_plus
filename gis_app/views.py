@@ -1,3 +1,4 @@
+from datetime import datetime
 import hashlib
 import zipfile
 from django.shortcuts import render # type: ignore
@@ -229,7 +230,7 @@ def upload_file(request):
                     destination.write(chunk)
             # Magic check for LAS files
             processer = SuperLas()
-            process_result = processer.process_file(internalStoragePath)
+            process_result = processer.process_file1(internalStoragePath)
 
             print(process_result)
             processed_file_path = None
@@ -238,12 +239,15 @@ def upload_file(request):
             print(f"field_name = {field_name}\n\n")
             company_name = features.get('company', None)
             well_number = features.get('well', None)
-            metrics_list = features.get('mnemonic_list_rus', []) + features.get('mnemonic_list_eng', [])
+            if features.get('mnemonic_list_rus', []) is None or features.get('mnemonic_list_eng', []) is None:
+                metrics_list = []
+            else:
+                metrics_list = features.get('mnemonic_list_rus', [])  + features.get('mnemonic_list_eng', [])
             processed_file_path = features.get('file_path', None)
             file_version = features.get('version', None)
             start_depth = features.get('start_depth', None)
             stop_depth = features.get('stop_depth', None)
-            datetime_value = features.get('datetime', None)
+            datetime_value: datetime = features.get('datetime', None)
         
             file_data.append({
                     "status": process_result.get('status', 'error'),
@@ -259,7 +263,7 @@ def upload_file(request):
                     'file_version': file_version,
                     'start_depth': start_depth,
                     'stop_depth': stop_depth,
-                    'datetime': datetime_value,
+                    'datetime': str(datetime_value) if datetime_value is not None else None,
                     'errors': process_result.get('errors', [])
             }
             )
@@ -296,7 +300,7 @@ def save_to_database(request):
                 fileVersion=file_entry['file_version'],
                 startDepth=file_entry['start_depth'],
                 stopDepth=file_entry['stop_depth'],
-                datetime=file_entry['datetime'],
+                datetime=datetime.strptime(file_entry['datetime'], '%Y-%m-%d %H:%M:%S'),
                 company=company,
                 well=well,
                 internalStoragePath=file_entry['processedFilePath'],
