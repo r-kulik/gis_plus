@@ -31,8 +31,10 @@ class LASchecker():
         return statistics.fmean(differences)
     
     def step(self):
-        if self.las.well.step.value == '':
-            self.las.well.step.value = self.calculate_step()
+        if not 'STEP' in self.las.well.keys():
+            self.las.well.append(lasio.HeaderItem('STEP', unit=self.las.well["STRT"].unit, value='', descr='Step'))
+        if self.las.well['STEP'].value == '':
+            self.las.well['STEP'].value = self.calculate_step()
             return ["Was not appropriate step. Calculated, choose step {}".format(self.las.well.step.value)]
         return []
 
@@ -76,7 +78,7 @@ class LASchecker():
             warns += ['WRAP item not found in the ~V section']
         if 'Well' in self.lascheck.sections.keys():
             if not 'NULL' in self.las.well.keys():
-                self.las.well.append(lasio.HeaderItem('NULL', value='-9999.25', descr='Null value'))
+                self.las.well.append(lasio.HeaderItem('NULL', value=-9999.25, descr='Null value'))
                 warns += ['NULL item not found in the ~W section']
             if not math.isclose(self.las.well['NULL'].value, -9999) and not \
                 math.isclose(self.las.well['NULL'].value, -999.25) and not \
@@ -86,8 +88,13 @@ class LASchecker():
             warns+= self.step()
         for i in lascheck.spec.MandatorySections().get_missing_mandatory_sections(self.lascheck):
             errors += ["Missing mandatory sections: {}".format(i)]
-        with open('tamed.las', 'w', encoding='utf-8') as f:
-            self.las.write(f)
+            return errors, [], None
+        if not len(self.las.data) == 0:
+            with open('tamed.las', 'w', encoding='utf-8') as f:
+                self.las.write(f)
+        else:
+            errors += ["Empty Ascii block"]
+            return errors, [], None
         self.lascheck = lascheck.read('tamed.las', encoding='utf-8')
         self.lascheck.check_conformity()
         non_conformities = self.lascheck.get_non_conformities() + errors

@@ -29,6 +29,7 @@ class SuperLas:
         
         
         status = ''
+        print(result)
         if len(result[0]) > 0:
             status = "error"
         elif len(result[0]) == 0 and len(result[1]) > 0:
@@ -48,7 +49,7 @@ class SuperLas:
                 er = a.index("Element not found")
                 status = "error"
                 
-                result[0].append(f"Unknown mnemonic {er}")
+                result[0].append(f"Unknown mnemonic {curves[er]}")
                 
                 features_sklad = {
                 "start_depth": None,
@@ -204,10 +205,9 @@ class SuperLas:
         
 if __name__ == "__main__":
     c = SuperLas()
-    c.get_image("42.las")
+    #c.get_image("42.las")
     """c = SuperLas()
         print(c.process_file1("15_2.las"))"""
-"""    
     import os
     relative_path = os.path.join('temp_files')
 
@@ -215,4 +215,6 @@ if __name__ == "__main__":
 
 
     # Iterate through the files in the directory
-    for filename in os.listdir(absolute_path):"""
+    for filename in os.listdir(absolute_path):
+        print(filename)
+        print(c.process_file1(filename))

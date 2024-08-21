@@ -77,14 +77,14 @@ class WellIsNotNULL(Rule):
     @staticmethod
     def check(las_file):
         if "Well" in las_file.sections:
-            if las_file.well['WELL'].value != '' and las_file.well['WELL'].value:
+            if 'WELL' in las_file.well.keys() and las_file.well['WELL'].value != '' and las_file.well['WELL'].value:
                 return True
         return False
 class FieldIsNotNULL(Rule):
     @staticmethod
     def check(las_file):
         if "Well" in las_file.sections:
-            if las_file.well['FLD'].value != '' and las_file.well['FLD'].value:
+            if 'FLD' in las_file.well.keys() and las_file.well['FLD'].value != '' and las_file.well['FLD'].value:
                 return True
         return False
 
