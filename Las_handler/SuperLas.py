@@ -1,7 +1,11 @@
 import hashlib
 import random 
-from Las_handler.LasEncoder import LasEncoder
-from Las_handler.Checker import LASchecker
+try:
+    from Las_handler.LasEncoder import LasEncoder
+    from Las_handler.Checker import LASchecker
+except ModuleNotFoundError:
+    from LasEncoder import LasEncoder
+    from Checker import LASchecker
 
 class SuperLas:
     def __init__(self):
@@ -57,3 +61,4 @@ class SuperLas:
 if __name__ == "__main__":
     c = SuperLas()
     c.process_file1("10_IK.las")
+    

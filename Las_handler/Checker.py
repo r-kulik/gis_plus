@@ -1,7 +1,13 @@
 import lasio
-import Las_handler.lascheck as lascheck
+
 import statistics
 import os
+
+
+try:
+    from Las_handler import lascheck
+except ModuleNotFoundError:
+    import lascheck
 
 class LASchecker():
     def __init__(self, filepath: str):
@@ -15,9 +21,11 @@ class LASchecker():
         return statistics.fmean(differences)
     
     def step(self):
-        if self.las.well.step.value == '':
+        if self.las.well.step.value == '' or lascheck.spec.ValidDepthDividedByStep().check(""):
             self.las.well.step.value = self.calculate_step()
             self.las.write('filename')
+            return ["Was not appropriate step. Recalculated, choose step {}".format(self.las.well.step.value)]
+        return []
 
     def amount_mnem_check(self):
         equal = (len(self.las.curves) == self.las.data.shape[1])
@@ -67,10 +75,9 @@ class LASchecker():
             warns += ["Wrong NULL value. Should be -9999, -999.25 or -9999.25. Replaced to -9999.25"]
         with open('tamed.las', 'w', encoding='utf-8') as f:
             self.las.write(f)
+        warns+= self.step()
         self.lascheck = lascheck.read('tamed.las', encoding='utf-8')
         print(warns)
-        first_problems = self.check_for_potentially_deadly()
-        self.step()
         self.lascheck.check_conformity()
         non_conformities = self.lascheck.get_non_conformities()
         if not self.amount_mnem_check():
