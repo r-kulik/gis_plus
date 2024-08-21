@@ -299,16 +299,30 @@ def save_to_database(request):
 @csrf_exempt
 def downloadFiles(request):
     if request.method == 'POST':
-        selected_files = request.POST.getlist('files')
+        print(request.POST)
+        selected_files = request.POST.getlist('files[]')
+        print(f"selected_files = {selected_files}")
         zip_filename = 'exported_files.zip'
         temp_zip = zipfile.ZipFile(zip_filename, 'w')
+        name_counter = {}  # Dictionary to track file names and their counts
 
         for file_id in selected_files:
             try:
                 file_obj = Files.objects.get(fileId=file_id)
-                file_path = file_obj.internalStoragePath
+                file_path = os.path.join('temp_files', (file_obj.internalStoragePath).strip())
+                original_name = os.path.basename(file_obj.filePath)
+                print(file_path)
+
                 if os.path.exists(file_path):
-                    temp_zip.write(file_path, os.path.basename(file_path))
+                    # Handle name collisions
+                    if original_name in name_counter:
+                        name_counter[original_name] += 1
+                        base, ext = os.path.splitext(original_name)
+                        original_name = f"{base}_{name_counter[original_name]}{ext}"
+                    else:
+                        name_counter[original_name] = 0
+
+                    temp_zip.write(file_path, original_name)
                 else:
                     print(f"File not found: {file_path}")
             except Files.DoesNotExist:

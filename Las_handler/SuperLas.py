@@ -26,7 +26,8 @@ class SuperLas:
                         "well": "5555",
                         "mnemonic_list_rus": ['ПС', "ИН", "A"],
                         "mnemonic_list_eng": ['D', "O", "G"],
-                        "file_path": hashlib.md5(file_path.encode("utf-8")).hexdigest() 
+                        "file_path": new_name,
+
                         
                     },
                 "errors": [
