@@ -52,17 +52,18 @@ input[list]:focus {
 
 .checkbox-wrapper {
     --borderColor: #48c;
-    --borderWidth: .1em;
+    --borderWidth: .3em;
 }
 
 .checkbox-wrapper input[type=checkbox] {
     -webkit-appearance: none;
     appearance: none;
     vertical-align: middle;
+    align-items: center;
     background: #fff;
     border-radius: 0.125em;
     display: inline-block;
-    border: var(--borderWidth) solid var(--borderColor);
+    border: .1vw solid var(--borderColor);
     width: .5vw;
     height: .5vw;
     position: relative;
@@ -73,7 +74,7 @@ input[list]:focus {
     content: "";
     position: absolute;
     background: var(--borderColor);
-    width: calc(var(--borderWidth) * 3);
+    width: .5vw;
     height: var(--borderWidth);
     top: 50%;
     left: 10%;
@@ -120,7 +121,7 @@ input[list]:focus {
     margin: 1em auto;
 }
 
-.lasFilesTable {
+.files-table {
     font-size: 1vw;
     width: 100%;
     margin: 1em;
@@ -216,7 +217,9 @@ input[list]:focus {
     transition: background-color 0.5s ease;
 }
 
-.file-button, .upload-button {
+.file-button, .save-button {
+    display: inline-block;
+    vertical-align: middle;
     padding: 1em 1em;
     margin: 1vw 1vw 1vw 0;
     font-size: 1vw;
@@ -228,6 +231,6 @@ input[list]:focus {
     transition: background-color 0.5s ease;
 }
 
-.file-button:hover, .upload-button:hover {
+.file-button:hover, .save-button:hover {
     background-color: #006BC0;
 }

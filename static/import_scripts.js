@@ -118,8 +118,7 @@ function saveFilesToDatabase() {
         data: JSON.stringify(files),
         success: function(data) {
             alert('Files saved to database successfully!');
-            $('#fileTable tbody').empty(); // Clear the table
-            $('#saveButton').hide(); // Hide the save button
+            $('#fileTable tbody').empty();
         },
         error: function(xhr, status, error) {
             alert('Error saving files to database: ' + error);

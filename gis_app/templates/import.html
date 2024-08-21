@@ -40,14 +40,21 @@
 
     <main class="content">
         <label for="fileInput" class="file-button">Выбрать файлы</label>
-        <input class="file-input-tag" style="visibility:hidden;" type="file" id="fileInput" multiple>
-        <button class="upload-button" id="uploadButton">Загрузить файлы</button>
-        <button class="save-button" id="saveButton" style="display:none;">Добавить в базу данных</button>
+        <input class="file-input-tag" type="file" id="fileInput" multiple>
+        <button class="save-button" id="saveButton">Добавить в базу данных</button>
         
-        <table id="fileTable">
+        <table class="files-table" id="fileTable">
             <thead>
                 <tr>
+                    <th>Check box</th>
                     <th>File Name</th>
+                    <th>Фаталь</th>
+                    <th>Type</th>
+                    <th>Content</th>
+                    
+                    <th>Size</th>
+                    <th>Type</th>
+                    <th>Content</th>
                     <th>Size</th>
                     <th>Type</th>
                     <th>Content</th>
