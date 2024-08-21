@@ -1,3 +1,4 @@
+import hashlib
 import zipfile
 from django.shortcuts import render # type: ignore
 from django.http import HttpResponse, HttpRequest, JsonResponse # type: ignore
@@ -230,8 +231,11 @@ def upload_file(request):
             processer = SuperLas()
             process_result = processer.process_file(internalStoragePath)
 
+            print(process_result)
             processed_file_path = None
             features = process_result.get('features', {})
+            field_name = features.get('fieldName', None)
+            print(f"field_name = {field_name}\n\n")
             company_name = features.get('company', None)
             well_number = features.get('well', None)
             metrics_list = features.get('mnemonic_list_rus', []) + features.get('mnemonic_list_eng', [])
@@ -249,6 +253,7 @@ def upload_file(request):
                     'processedFilePath': processed_file_path,
                     'description': process_result.get('description', 'No description'),
                     'company_name': company_name,
+                    'field_name': field_name,
                     'well_number': well_number,
                     'metrics_list': metrics_list,
                     'file_version': file_version,
@@ -271,12 +276,20 @@ def save_to_database(request):
 
         for file_entry in data:
             company, _ = get_or_create_company(file_entry['company_name'])
-            well, _ = get_or_create_well(file_entry['well_number'], field_name=file_entry['company_name'])
+            well, _ = get_or_create_well(file_entry['well_number'], field_name=file_entry['field_name'])
             metrics = [get_or_create_metric(metric_name)[0] for metric_name in file_entry['metrics_list']]
-            
+            # Calculate the hash of the file content
+            file_path = os.path.join('temp_files', file_entry['processedFilePath'].strip())
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as f:
+                    file_hash = hashlib.sha256(f.read()).hexdigest()
+            else:
+                continue  # Skip this file entry if the file does not exist
 
-            print(file_entry['processedFilePath'])
-            # костыль!
+            # Check if a file with the same hash already exists
+            if Files.objects.filter(internalHash=file_hash).exists():
+                continue  # Skip saving this file entry
+
             if file_entry['datetime'] == '': file_entry['datetime'] = None
             file_entry_model = Files(
                 filePath=file_entry['name'],
@@ -286,7 +299,8 @@ def save_to_database(request):
                 datetime=file_entry['datetime'],
                 company=company,
                 well=well,
-                internalStoragePath=file_entry['processedFilePath']
+                internalStoragePath=file_entry['processedFilePath'],
+                internalHash=file_hash
             )
 
             file_entry_model.save()

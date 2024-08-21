@@ -17,9 +17,6 @@ class CurveMetrics(models.Model):
     metricName = models.TextField()
 
 class Files(models.Model):
-    """
-    Здесь и далее при описании моделей используется CamelNotation
-    """
     fileId = models.AutoField(primary_key=True)
     filePath = models.FilePathField()
     fileVersion = models.CharField(max_length=5)
@@ -30,3 +27,14 @@ class Files(models.Model):
     well = models.ForeignKey(to=Wells, on_delete=models.CASCADE)
     metrics = models.ManyToManyField(CurveMetrics)
     internalStoragePath = models.FilePathField()
+    internalHash = models.CharField(max_length=64, unique=True)  # Assuming SHA-256 hash
+
+    def save(self, *args, **kwargs):
+        if not self.internalHash:
+            # Calculate the hash of the file content
+            file_path = os.path.join('temp_files', self.internalStoragePath.strip())
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as f:
+                    file_hash = hashlib.sha256(f.read()).hexdigest()
+                self.internalHash = file_hash
+        super(Files, self).save(*args, **kwargs)
