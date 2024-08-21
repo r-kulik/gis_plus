@@ -41,7 +41,8 @@ def hello_world(request):
                 stopDepth=random.uniform(1000, 5000),
                 datetime=fake.date_time_this_decade(before_now=True, after_now=False, tzinfo=timezone.get_current_timezone()),
                 company=random.choice(companies),
-                well=random.choice(wells)
+                well=random.choice(wells),
+                internalStoragePath = fake.file_path(depth=3, category='text')
             )
             file.metrics.set(random.sample(list(metrics), random.randint(1, 5)))
 
@@ -173,7 +174,8 @@ def exportFiles(request: HttpRequest) -> HttpResponse:
                 'companyName': file.company.companyName,
                 'wellNumber': file.well.wellNumber,
                 'fieldName': file.well.field.fieldName,
-                'metrics': [metric.metricName for metric in file.metrics.all()]
+                'metrics': [metric.metricName for metric in file.metrics.all()],
+                'internalStoragePath': file.internalStoragePath
             }
             file_list.append(file_data)
 

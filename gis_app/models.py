@@ -29,3 +29,4 @@ class Files(models.Model):
     company = models.ForeignKey(to=Companies, on_delete=models.CASCADE)
     well = models.ForeignKey(to=Wells, on_delete=models.CASCADE)
     metrics = models.ManyToManyField(CurveMetrics)
+    internalStoragePath = models.FilePathField()
