@@ -1,6 +1,13 @@
-function loadAndProcessFiles(data) {
-    // Clear the existing rows in the table body
+var totalFiles = 0;
+var processedFiles = 0;
 
+function updateProgressBar() {
+    var percentage = (processedFiles / totalFiles) * 100;
+    $('#progressBar').css('width', percentage + '%');
+    $('#progressText').text(percentage.toFixed(2) + '%');
+}
+
+function loadAndProcessFiles(data) {
 
     // Iterate over each file in the data
     $.each(data.files, function(i, file) {
@@ -54,7 +61,15 @@ function loadAndProcessFiles(data) {
         if (file.status === 'ok') {
             $row.find('input[type="checkbox"]').prop('checked', true);
         }
+
+        processedFiles++;
+        updateProgressBar();
     });
+
+    // Hide the toolbar if all files are processed
+    if (processedFiles === totalFiles) {
+        $('#uploadToolbar').hide();
+    }
 
     // Show the save button
     $('#saveButton').show();
@@ -124,12 +139,19 @@ function saveFilesToDatabase() {
             alert('Error saving files to database: ' + error);
         }
     });
+    processedFiles = 0;
+    var totalFiles = 0;
 }
 
 $(document).ready(function() {
+    $('#uploadToolbar').hide(); 
     $('#fileInput').on('change', function() {
         $('#fileTable tbody').empty();
         var files = $('#fileInput')[0].files;
+        totalFiles = files.length;
+        processedFiles = 0;
+        $('#uploadToolbar').show(); // Show the toolbar
+        updateProgressBar();
         uploadFilesSequentially(files, 0); // Start with the first file
     });
 

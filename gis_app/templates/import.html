@@ -42,7 +42,14 @@
         <label for="fileInput" class="file-button">Выбрать файлы</label>
         <input class="file-input-tag" type="file" id="fileInput" multiple>
         <button class="save-button" id="saveButton">Добавить в базу данных</button>
-        
+    
+        <div class="toolbar" id="uploadToolbar">
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <span id="progressText">0%</span>
+        </div>
+
         <table class="files-table" id="fileTable">
             <thead>
                 <tr>
