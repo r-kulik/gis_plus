@@ -58,7 +58,7 @@ function exportSelectedFiles() {
     });
 
     if (selectedFiles.length === 0) {
-        alert('No files selected for export.');
+        alert('Не выбрано ни одного файла для сохранения');
         return;
     }
 

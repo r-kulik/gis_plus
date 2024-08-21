@@ -123,7 +123,7 @@ function saveFilesToDatabase() {
     });
 
     if (files.length === 0) {
-        alert('No files selected to save.');
+        alert('Не выбрано ни одного файла для сохранения');
         return;
     }
 
@@ -133,11 +133,11 @@ function saveFilesToDatabase() {
         contentType: 'application/json',
         data: JSON.stringify(files),
         success: function(data) {
-            alert('Files saved to database successfully!');
+            alert('Файлы успешно сохранены в базу данных');
             $('#fileTable tbody').empty();
         },
         error: function(xhr, status, error) {
-            alert('Error saving files to database: ' + error);
+            alert('Ошибка при сохранении файлов:' + error);
         }
     });
     processedFiles = 0;
