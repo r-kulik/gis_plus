@@ -90,24 +90,6 @@ function exportSelectedFiles() {
     });
 }
 
-$(document).ready(
-    () => {
-        console.log($.fn.jquery); // Check jQuery version
-        console.log(typeof $.tmpl); // Check if $.tmpl is defined
-        $('#searchButton').on('click', sendRequestToGetFiles);
-        $('#exportButton').on('click', exportSelectedFiles);
-
-        // Add click event listener to table rows
-        $('#fileTable tbody').on('click', 'tr', function() {
-            // Check if the clicked row is not already expanded
-            if (!$(this).next().hasClass('window-container')) {
-                $('#fileContentTemplate').tmpl().insertAfter($(this));
-            }
-        });
-    }
-);
-
-
 document.addEventListener('DOMContentLoaded', (event) => {
     const image = document.getElementById('zoomable-image');
     let isDragging = false;
@@ -151,3 +133,32 @@ document.addEventListener('DOMContentLoaded', (event) => {
       image.classList.remove('grabbing');
     });
 });
+
+$(document).ready(
+    () => {
+        console.log($.fn.jquery); // Check jQuery version
+        console.log(typeof $.tmpl); // Check if $.tmpl is defined
+        $('#searchButton').on('click', sendRequestToGetFiles);
+        $('#exportButton').on('click', exportSelectedFiles);
+
+        // // Add click event listener to table rows
+        // $('#fileTable tbody').on('click', 'tr', function() {
+        //     // Check if the clicked row is not already expanded
+        //     if (!$(this).next().hasClass('window-container') && !$(this).hasClass('window-container')) {
+        //         $('#fileContentTemplate').tmpl().insertAfter($(this));
+        //     }
+        // });
+
+        $('#fileTable tbody').on('click', 'tr', function() {
+            var templateContent = $('#fileContentTemplate').html();
+            $('#windowContent').html(templateContent);
+            $('#windowOverlay').show();
+        });
+
+        $('#windowOverlay').on('click', function(event) {
+            if (event.target === this) {
+                $(this).hide();
+            }
+        });
+    }
+);

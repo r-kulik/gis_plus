@@ -56,17 +56,8 @@ input[type=checkbox] {
     margin: 0 auto;
 }
 
-.window-container {
-    display: flex;
-    width: 100%;
-    height: 60vh;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-}
-
 .scrollable-window {
     overflow-y: auto;
-    height: 100%;
     padding: 0 1vw;
     width: 50%;
     font-size: 1.25vw;
@@ -155,6 +146,29 @@ input[type=checkbox] {
 .page-selection-button:hover {
     background-color: #006BC0;
 }
+
+.window-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: auto;
+    height: 100%;
+    background: rgba(4, 3, 3, 0.5);
+}
+
+.window-container {
+    display: flex;
+    width: 80%;
+    height: 80%;
+    border-radius: .5vw;
+    background: white;
+    padding: 2vw;
+    box-shadow: 0 0 1vw rgba(0, 0, 0, 0.5);
+    align-items: center;
+}
+
 
 .page-selection-button-active {
     font-size: 1vw;
