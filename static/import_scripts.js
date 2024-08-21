@@ -1,6 +1,7 @@
 function loadAndProcessFiles(data) {
     // Clear the existing rows in the table body
 
+
     // Iterate over each file in the data
     $.each(data.files, function(i, file) {
         // Determine the color based on the status
@@ -47,7 +48,12 @@ function loadAndProcessFiles(data) {
         };
 
         // Render the template with the fileRowData
-        $('#fileRowTemplate').tmpl(fileRowData).appendTo('#fileTable tbody');
+        var $row = $('#fileRowTemplate').tmpl(fileRowData).appendTo('#fileTable tbody');
+
+        // Check the checkbox for rows with 'ok' status
+        if (file.status === 'ok') {
+            $row.find('input[type="checkbox"]').prop('checked', true);
+        }
     });
 
     // Show the save button
@@ -122,7 +128,7 @@ function saveFilesToDatabase() {
 }
 
 $(document).ready(function() {
-    $('#uploadButton').click(function() {
+    $('#fileInput').on('change', function() {
         $('#fileTable tbody').empty();
         var files = $('#fileInput')[0].files;
         uploadFilesSequentially(files, 0); // Start with the first file
