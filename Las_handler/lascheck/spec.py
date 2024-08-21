@@ -72,6 +72,17 @@ class MandatoryLinesInWellSection(Rule):
             if mandatory_sections_found:
                 return True
         return False
+    
+class WellIsNotNULL(Rule):
+    @staticmethod
+    def check(las_file):
+        if "Well" in las_file.sections:
+            if las_file.well['WELL'] != '' and las_file.well['WELL'] 
+            mandatory_lines = ["STRT", "STOP", "STEP", "NULL", "WELL", "FLD", "DATE"]
+            mandatory_sections_found = all(elem in las_file.well for elem in mandatory_lines)
+            if mandatory_sections_found:
+                return True
+        return False
 
 
 class DuplicateSections(Rule):
