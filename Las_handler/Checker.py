@@ -15,6 +15,7 @@ class LASchecker():
     def __init__(self, filepath: str):
         #super(LASchecker, self).__init__()
         try:
+            self.filepath = filepath
             self.lascheck = lascheck.read(filepath, encoding='utf-8')
             self.las = lasio.read(filepath, encoding='utf-8')
             self.error = 0
@@ -94,7 +95,11 @@ class LASchecker():
             non_conformities.append("Amount of mnemonics doesn't match with curves amount")
         if not self.check_spaces()[0]:
            non_conformities.append("Additional whitespaces in {}".format(self.check_spaces()[1]))
-        return non_conformities, warns
+        if len(non_conformities) != 0:
+            res_file = lasio.read(self.filepath, encoding='utf-8')
+        else:
+            res_file = lasio.read('tamed.las')
+        return non_conformities, warns, res_file
 
 if __name__ == "__main__":
     relative_path = os.path.join('temp_files')
