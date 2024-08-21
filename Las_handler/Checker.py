@@ -1,7 +1,9 @@
+import lasio.exceptions
 import lasio
-
+import sys
 import statistics
 import os
+import math
 
 
 try:
@@ -12,8 +14,15 @@ except ModuleNotFoundError:
 class LASchecker():
     def __init__(self, filepath: str):
         #super(LASchecker, self).__init__()
-        self.lascheck = lascheck.read(filepath, encoding='utf-8')
-        self.las = lasio.read(filepath, encoding='utf-8')
+        try:
+            self.lascheck = lascheck.read(filepath, encoding='utf-8')
+            self.las = lasio.read(filepath, encoding='utf-8')
+            self.error = 0
+        except (lasio.exceptions.LASHeaderError, lasio.exceptions.LASDataError, lasio.exceptions.LASUnknownUnitError):
+            exception_type, exception_value, exception_traceback = sys.exc_info()
+            self.error = [], [exception_value]
+        except Exception:
+            self.error = [], [sys.exc_info()[0], ':', sys.exc_info()[1]]
 
     def calculate_step(self):
         depth_values = self.las.curves[0].data
@@ -21,10 +30,9 @@ class LASchecker():
         return statistics.fmean(differences)
     
     def step(self):
-        if self.las.well.step.value == '' or lascheck.spec.ValidDepthDividedByStep().check(""):
+        if self.las.well.step.value == '':
             self.las.well.step.value = self.calculate_step()
-            self.las.write('filename')
-            return ["Was not appropriate step. Recalculated, choose step {}".format(self.las.well.step.value)]
+            return ["Was not appropriate step. Calculated, choose step {}".format(self.las.well.step.value)]
         return []
 
     def amount_mnem_check(self):
@@ -48,15 +56,13 @@ class LASchecker():
             for j in ['mnemonic', 'unit']:
                 if ' ' in str(i[j]): return [False, '~V section']
         return [True]
-    def check_for_potentially_deadly(self):
-        fixed = []
-        if not 'VERS' in self.las.version.keys(): pass
-        if not 'WRAP' in self.las.version.keys(): return "WRAP not in ~V section"
-        if not 'NULL' in self.las.well.keys(): return "NULL not in ~V section"
 
 
     def check(self):
+        if self.error != 0:
+            return self.error
         warns = []
+        errors = []
         if not "Version" in self.lascheck.sections.keys():
             warns += ['Err: Header section Version regexp=~V was not found. Created ~V section.',\
                       'VERS item not found in the ~V section.',\
@@ -67,19 +73,23 @@ class LASchecker():
         if not 'WRAP' in self.las.version.keys():
             self.las.version.append(lasio.HeaderItem('WRAP', value='NO', descr='Data Wrapping'))
             warns += ['WRAP item not found in the ~V section']
-        if not 'NULL' in self.las.well.keys():
-            self.las.well.append(lasio.HeaderItem('NULL', value='-9999.25', descr='Null value'))
-            warns += ['NULL item not found in the ~W section']
-        if self.las.well['NULL'].value not in ['-9999', '-999.25', '-9999.25']:
-            self.las.well['NULL'].value = '-9999.25'
-            warns += ["Wrong NULL value. Should be -9999, -999.25 or -9999.25. Replaced to -9999.25"]
+        if 'Well' in self.lascheck.sections.keys():
+            if not 'NULL' in self.las.well.keys():
+                self.las.well.append(lasio.HeaderItem('NULL', value='-9999.25', descr='Null value'))
+                warns += ['NULL item not found in the ~W section']
+            if not math.isclose(self.las.well['NULL'].value, -9999) and not \
+                math.isclose(self.las.well['NULL'].value, -999.25) and not \
+                math.isclose(self.las.well['NULL'].value, -9999.25):
+                self.las.well['NULL'].value = '-9999.25'
+                warns += ["Wrong NULL value. Should be -9999, -999.25 or -9999.25. Replaced to -9999.25"]
+            warns+= self.step()
+        for i in lascheck.spec.MandatorySections().get_missing_mandatory_sections(self.lascheck):
+            errors += ["Missing mandatory sections: {}".format(i)]
         with open('tamed.las', 'w', encoding='utf-8') as f:
             self.las.write(f)
-        warns+= self.step()
         self.lascheck = lascheck.read('tamed.las', encoding='utf-8')
-        print(warns)
         self.lascheck.check_conformity()
-        non_conformities = self.lascheck.get_non_conformities()
+        non_conformities = self.lascheck.get_non_conformities() + errors
         if not self.amount_mnem_check():
             non_conformities.append("Amount of mnemonics doesn't match with curves amount")
         if not self.check_spaces()[0]:
@@ -87,9 +97,16 @@ class LASchecker():
         return non_conformities, warns
 
 if __name__ == "__main__":
-    relative_path = os.path.join('temp_files', '15_1.las')
+    relative_path = os.path.join('temp_files')
 
     absolute_path = os.path.abspath(relative_path)
-    laaa = lasio.read(absolute_path)
-    checker = LASchecker(absolute_path)
-    print(checker.check())
+
+    # Iterate through the files in the directory
+    for filename in os.listdir(absolute_path):
+        print(filename)
+    # Construct the full path of the file
+        file_path = os.path.join(absolute_path, filename)
+        checker = LASchecker(file_path)
+        res = checker.check()
+        print(res)
+        
