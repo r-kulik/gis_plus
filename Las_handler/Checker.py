@@ -149,7 +149,7 @@ class LASchecker():
         return non_conformities, warns, res_file # возвращаем критические ошибки, исправленные ошибки и актуальный .las файл
 
 if __name__ == "__main__":
-    relative_path = os.path.join('temp_files')
+    '''relative_path = os.path.join('temp_files')
 
     absolute_path = os.path.abspath(relative_path)
 
@@ -161,11 +161,11 @@ if __name__ == "__main__":
         file_path = os.path.join(absolute_path, filename)
         checker = LASchecker(file_path)
         res = checker.check()
-        print(res)
-    '''relative_path = os.path.join('temp_files', '42.las')
+        print(res)'''
+    relative_path = os.path.join('temp_files', '1_segmented.las')
 
     absolute_path = os.path.abspath(relative_path)
     checker = LASchecker(absolute_path)
     res = checker.check()
-    print(res)'''
+    print(res)
         

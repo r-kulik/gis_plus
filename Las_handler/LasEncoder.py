@@ -12,7 +12,7 @@ class LasEncoder:
     def get_encoding(self):
         with open(self.name, 'rb') as f:
             raw_data = f.read()
-            result = chardet.detect(raw_data)
+            result = chardet.detect(raw_data[:10000])
             encoding = result['encoding']
             return encoding
         
