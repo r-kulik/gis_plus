@@ -12,7 +12,12 @@
 <body>
 
     <script type="text/x-jquery-tmpl" id="fileRowTemplate">
-        <tr>
+        <tr class="trtrtr">
+            <td>
+                <div class="checkbox-wrapper">
+                    <input type="checkbox"/>
+                </div>
+            </td>
             <td>${fileId}</td>
             <td>${filePath}</td>
             <td>${fileVersion}</td>
@@ -25,8 +30,6 @@
             <td>${metrics}</td>
         </tr>
     </script>
-
-
 
     <header>
         <nav class="header-container">
@@ -107,15 +110,23 @@
         <table class="lasFilesTable" id="fileTable">
             <thead>
                 <tr>
+                    <th>Check box</th>
                     <th>File Name</th>
+                    <th>Size</th>
+                    <th>Type</th>
+                    <th>Content</th>
+                    
+                    <th>Size</th>
+                    <th>Type</th>
+                    <th>Content</th>
                     <th>Size</th>
                     <th>Type</th>
                     <th>Content</th>
                 </tr>
             </thead>
-
             <tbody>
             </tbody>
+
         </table>
     </main>
 </body>
