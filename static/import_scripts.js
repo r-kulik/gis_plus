@@ -95,7 +95,7 @@ function saveFilesToDatabase() {
                 start_depth: $row.find('td:eq(9)').text(),
                 stop_depth: $row.find('td:eq(10)').text(),
                 processedFilePath: $row.find('.processedFilePathHolder').text(),
-                file_version: $row.fing('.fileVersionHolder').text()
+                file_version: $row.find('.fileVersionHolder').text()
             });
         }
     });

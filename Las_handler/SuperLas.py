@@ -1,3 +1,4 @@
+import hashlib
 import random 
 from Las_handler.LasEncoder import LasEncoder
 from Las_handler.Checker import LASchecker
@@ -19,7 +20,7 @@ class SuperLas:
                         "well": "5555",
                         "mnemonic_list_rus": ['ПС', "ИН", "A"],
                         "mnemonic_list_eng": ['D', "O", "G"],
-                        "file_path": "Encoded/1.las",
+                        "file_path": hashlib.md5(file_path.encode("utf-8")).hexdigest() 
                         
                     },
                 "errors": [

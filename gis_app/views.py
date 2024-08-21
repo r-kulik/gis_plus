@@ -77,7 +77,7 @@ def exportFiles(request: HttpRequest) -> HttpResponse:
         start_measure_till_depth_filter = request.GET.get('startMeasureTillDepthDepthFilter', None)
         finish_measure_till_depth_filter = request.GET.get('finishMeasureTillDepthDepthFilter', None)
         companies_filter = request.GET.get('companiesFilter', None)
-        metrics_filter = request.GET.get('metricsFilter', )
+        metrics_filter = request.GET.get('metricsFilter', [])
         start_year_filter = request.GET.get('startYearFilter', None)
         finish_year_filter = request.GET.get('finishYearFilter', None)
 
@@ -238,7 +238,8 @@ def upload_file(request):
             file_version = features.get('version', None)
             start_depth = features.get('start_depth', None)
             stop_depth = features.get('stop_depth', None)
-            datetime_value = features.get('datetime')
+            datetime_value = features.get('datetime', None)
+        
             file_data.append({
                     "status": process_result.get('status', 'error'),
                     'name': file.name,
@@ -272,6 +273,8 @@ def save_to_database(request):
             well, _ = get_or_create_well(file_entry['well_number'], field_name=file_entry['company_name'])
             metrics = [get_or_create_metric(metric_name)[0] for metric_name in file_entry['metrics_list']]
             
+            # костыль!
+            if file_entry['datetime'] == '': file_entry['datetime'] = None
             file_entry_model = Files(
                 filePath=file_entry['name'],
                 fileVersion=file_entry['file_version'],
