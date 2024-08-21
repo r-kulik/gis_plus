@@ -7,7 +7,8 @@ from faker import Faker
 from django.utils import timezone
 from .models import Companies, Fields, Wells, CurveMetrics, Files
 from django.db.models import Q, Count
-
+import random
+import string
 
 def hello_world(request):
     fake = Faker("ru_RU")
@@ -189,24 +190,33 @@ def exportFiles(request: HttpRequest) -> HttpResponse:
 
 @csrf_exempt
 def upload_file(request):
-
-    FileTOCheck = Files(
-
-    )
     if request.method == 'POST' and request.FILES.getlist('files'):
         files = request.FILES.getlist('files')
         file_data = []
         for file in files:
             # Save file temporarily or process it
-            file_path = os.path.join('temp_files', file.name)
+            def generate_random_string(length):
+                characters = string.ascii_letters + string.digits  # Includes both letters (uppercase and lowercase) and digits
+                random_string = ''.join(random.choice(characters) for _ in range(length))
+                return random_string
+            internalStoragePath = generate_random_string(48) + ".las"
+            file_path = os.path.join('temp_files', internalStoragePath)
             with open(file_path, 'wb+') as destination:
                 for chunk in file.chunks():
                     destination.write(chunk)
+            # вот здесь у нас магия проверки ласов
+
+            
+            status = ""
+            # 
             file_data.append({
                 'name': file.name,
                 'size': file.size,
                 'type': file.content_type,
-                'path': file_path
+                'path': file_path,
+                'internalStoragePath': internalStoragePath,
+                "status": "", # status: OK, WARN, FAIL,
+                "commentary": ""   # some commentary about the exception or changes
             })
         return JsonResponse({'files': file_data})
     return JsonResponse({'error': 'No files uploaded'}, status=400)
