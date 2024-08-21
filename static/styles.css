@@ -191,3 +191,27 @@ input[type=checkbox] {
 .file-button:hover, .save-button:hover {
     background-color: #006BC0;
 }
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    width: 100%;
+    background-color: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+.progress {
+    height: 20px;
+    background-color: #4CAF50;
+    width: 0%;
+}
+
+#progressText {
+    font-size: 16px;
+}

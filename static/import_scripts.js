@@ -1,6 +1,13 @@
-function loadAndProcessFiles(data) {
-    // Clear the existing rows in the table body
+var totalFiles = 0;
+var processedFiles = 0;
 
+function updateProgressBar() {
+    var percentage = (processedFiles / totalFiles) * 100;
+    $('#progressBar').css('width', percentage + '%');
+    $('#progressText').text(percentage.toFixed(2) + '%');
+}
+
+function loadAndProcessFiles(data) {
 
     // Iterate over each file in the data
     $.each(data.files, function(i, file) {
@@ -27,11 +34,11 @@ function loadAndProcessFiles(data) {
                 warnsAmount++;
             }
         });
-
+        console.log(file);
         // Extract the relevant information from the file data
         var fileRowData = {
             fileName: file.name,
-            fieldName: file.company_name,
+            fieldName: file.field_name,
             wellNumber: file.well_number,
             metrics: (file.metrics_list || []).join(', '), // Ensure metrics_list is an array
             datetime: file.datetime,
@@ -54,7 +61,15 @@ function loadAndProcessFiles(data) {
         if (file.status === 'ok') {
             $row.find('input[type="checkbox"]').prop('checked', true);
         }
+
+        processedFiles++;
+        updateProgressBar();
     });
+
+    // Hide the toolbar if all files are processed
+    if (processedFiles === totalFiles) {
+        $('#uploadToolbar').hide();
+    }
 
     // Show the save button
     $('#saveButton').show();
@@ -95,6 +110,7 @@ function saveFilesToDatabase() {
             files.push({
                 name: $row.find('td:eq(3)').text(),
                 company_name: $row.find('td:eq(8)').text(),
+                field_name: $row.find('td:eq(4)').text(),
                 well_number: $row.find('td:eq(5)').text(),
                 metrics_list: ($row.find('td:eq(6)').text().split(', ') || []), // Ensure metrics_list is an array
                 datetime: $row.find('td:eq(7)').text(),
@@ -124,12 +140,19 @@ function saveFilesToDatabase() {
             alert('Error saving files to database: ' + error);
         }
     });
+    processedFiles = 0;
+    var totalFiles = 0;
 }
 
 $(document).ready(function() {
+    $('#uploadToolbar').hide(); 
     $('#fileInput').on('change', function() {
         $('#fileTable tbody').empty();
         var files = $('#fileInput')[0].files;
+        totalFiles = files.length;
+        processedFiles = 0;
+        $('#uploadToolbar').show(); // Show the toolbar
+        updateProgressBar();
         uploadFilesSequentially(files, 0); // Start with the first file
     });
 
