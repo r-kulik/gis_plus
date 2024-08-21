@@ -3,7 +3,7 @@ class SuperLas:
         pass
     
     def process_file(self, file_path: str) -> dict:
-        return {"status" : "ok",
+        return {"status" : "ok",  # Это — глобальный статус результата процессинга. Если случился как минимум один warning — глобальный статус хотя бы "warn", если есть хоть один fatal error — глобальный статус равен "error"
                 "description": "Всё отлично",
                 "features": 
                     {
@@ -17,5 +17,27 @@ class SuperLas:
                         "mnemonic_list_eng": ['D', "O", "G"],
                         "file_path": "Encoded/1.las",
                         
-                    }}
-                
+                    },
+                "errors": [
+                    {
+                        "status": "warn",
+                        "description": "LoremIsplum dolor sit amet"
+                    },
+                    {
+                        "status": "warn",
+                        "description": "LoremIsplum dolor sit amet"
+                    },
+                    {
+                        "status": "warn",
+                        "description": "LoremIsplum dolor sit amet"
+                    },
+                    {
+                        "status": "error",
+                        "description": "LoremIsplum dolor sit amet"
+                    },
+                    {
+                        "status": "error",
+                        "description": "LoremIsplum dolor sit amet"
+                    }
+                ]
+        }

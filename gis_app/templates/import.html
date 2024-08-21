@@ -17,16 +17,19 @@
                     <input type="checkbox"/>
                 </div>
             </td>
-            <td>${fileId}</td>
-            <td>${filePath}</td>
-            <td>${fileVersion}</td>
-            <td>${startDepth}</td>
-            <td>${stopDepth}</td>
+            <td> ${status_color}</td>
+            <td> ${fatal_amount} / ${warns_amount} </td> 
+            <td>${fileName}</td>
+            <td>${fieldName}</td>
+            <td>${wellNumber}</td>
+            <td>${metrics}</td>
             <td>${datetime}</td>
             <td>${companyName}</td>
-            <td>${wellNumber}</td>
-            <td>${fieldName}</td>
-            <td>${metrics}</td>
+            <td>${startDepth}</td>
+            <td>${stopDepth}</td>
+
+            <td display=none class='originalFilePathHolder'> ${originalFilePath} </td>
+            <td display=none class='processedFilePathHolder'> ${processedFilePath} </td>
         </tr>
     </script>
 

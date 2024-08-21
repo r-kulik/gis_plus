@@ -269,7 +269,8 @@ def upload_file(request):
                     'originalFilePath': internalStoragePath,
                     'processedFilePath': processed_file_path,
                     'description': process_result.get('description', 'No description'),
-                    'database_entry': file_entry_to_dict(file_entry)
+                    'database_entry': file_entry_to_dict(file_entry),
+                    'errors': process_result.get('errors', [])
                 })
             else:
                 file_data.append({
@@ -278,7 +279,8 @@ def upload_file(request):
                     'size': file.size,
                     'originalFilePath': internalStoragePath,
                     'processedFilePath': processed_file_path,
-                    'description': process_result.get('description', 'No description')
+                    'description': process_result.get('description', 'No description'),
+                    'errors': process_result.get('errors', [])
                 })
         return JsonResponse({'files': file_data})
     return JsonResponse({'error': 'No files uploaded'}, status=400)
