@@ -239,7 +239,10 @@ def upload_file(request):
             print(f"field_name = {field_name}\n\n")
             company_name = features.get('company', None)
             well_number = features.get('well', None)
-            metrics_list = features.get('mnemonic_list_rus', []) + features.get('mnemonic_list_eng', [])
+            if features.get('mnemonic_list_rus', []) is None or features.get('mnemonic_list_eng', []) is None:
+                metrics_list = []
+            else:
+                metrics_list = features.get('mnemonic_list_rus', [])  + features.get('mnemonic_list_eng', [])
             processed_file_path = features.get('file_path', None)
             file_version = features.get('version', None)
             start_depth = features.get('start_depth', None)
@@ -260,7 +263,7 @@ def upload_file(request):
                     'file_version': file_version,
                     'start_depth': start_depth,
                     'stop_depth': stop_depth,
-                    'datetime': str(datetime_value),
+                    'datetime': str(datetime_value) if datetime_value is not None else None,
                     'errors': process_result.get('errors', [])
             }
             )
@@ -297,7 +300,7 @@ def save_to_database(request):
                 fileVersion=file_entry['file_version'],
                 startDepth=file_entry['start_depth'],
                 stopDepth=file_entry['stop_depth'],
-                datetime=datetime.strptime(file_entry['datetime'], "YYYY-MM-DD HH:MM:SS.ffffff"),
+                datetime=datetime.strptime(file_entry['datetime'], '%Y-%m-%d %H:%M:%S'),
                 company=company,
                 well=well,
                 internalStoragePath=file_entry['processedFilePath'],
