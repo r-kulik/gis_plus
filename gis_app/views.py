@@ -1,3 +1,4 @@
+from datetime import datetime
 import hashlib
 import zipfile
 from django.shortcuts import render # type: ignore
@@ -229,7 +230,7 @@ def upload_file(request):
                     destination.write(chunk)
             # Magic check for LAS files
             processer = SuperLas()
-            process_result = processer.process_file(internalStoragePath)
+            process_result = processer.process_file1(internalStoragePath)
 
             print(process_result)
             processed_file_path = None
@@ -243,7 +244,7 @@ def upload_file(request):
             file_version = features.get('version', None)
             start_depth = features.get('start_depth', None)
             stop_depth = features.get('stop_depth', None)
-            datetime_value = features.get('datetime', None)
+            datetime_value: datetime = features.get('datetime', None)
         
             file_data.append({
                     "status": process_result.get('status', 'error'),
@@ -259,7 +260,7 @@ def upload_file(request):
                     'file_version': file_version,
                     'start_depth': start_depth,
                     'stop_depth': stop_depth,
-                    'datetime': datetime_value,
+                    'datetime': str(datetime_value),
                     'errors': process_result.get('errors', [])
             }
             )
@@ -296,7 +297,7 @@ def save_to_database(request):
                 fileVersion=file_entry['file_version'],
                 startDepth=file_entry['start_depth'],
                 stopDepth=file_entry['stop_depth'],
-                datetime=file_entry['datetime'],
+                datetime=datetime.strptime(file_entry['datetime'], "YYYY-MM-DD HH:MM:SS.ffffff"),
                 company=company,
                 well=well,
                 internalStoragePath=file_entry['processedFilePath'],
