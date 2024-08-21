@@ -34,11 +34,11 @@ function loadAndProcessFiles(data) {
                 warnsAmount++;
             }
         });
-
+        console.log(file);
         // Extract the relevant information from the file data
         var fileRowData = {
             fileName: file.name,
-            fieldName: file.company_name,
+            fieldName: file.field_name,
             wellNumber: file.well_number,
             metrics: (file.metrics_list || []).join(', '), // Ensure metrics_list is an array
             datetime: file.datetime,
@@ -110,6 +110,7 @@ function saveFilesToDatabase() {
             files.push({
                 name: $row.find('td:eq(3)').text(),
                 company_name: $row.find('td:eq(8)').text(),
+                field_name: $row.find('td:eq(4)').text(),
                 well_number: $row.find('td:eq(5)').text(),
                 metrics_list: ($row.find('td:eq(6)').text().split(', ') || []), // Ensure metrics_list is an array
                 datetime: $row.find('td:eq(7)').text(),

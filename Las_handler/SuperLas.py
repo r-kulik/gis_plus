@@ -27,14 +27,25 @@ class SuperLas:
                         "stop_depth": 1000,
                         "version": "1.1",
                         "datetime": None,
-                        "company": "Шазпром",
-                        "fieldName": "Урен-гой",
-                        "well": "5555",
+                        "company": random.choice([
+                            "Шизпром",
+                            "ШизГаз Уфа",
+                            "булкин и ко ко ко",
+                            "Ш.У.Е. Ltd"
+                        ]),
+                        "fieldName": random.choice([
+                            "Урен-гой",
+                            "Хаханты-манстйск",
+                            "Бульба",
+                            "Булкинасс",
+                            "Место Х"
+                        ]),
+                        "well": str(
+                            random.randint(100, 1000)
+                        ),
                         "mnemonic_list_rus": ['ПС', "ИН", "A"],
                         "mnemonic_list_eng": ['D', "O", "G"],
                         "file_path": new_name,
-
-                        
                     },
                 "errors": [
                     {
