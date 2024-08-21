@@ -15,61 +15,6 @@ except ModuleNotFoundError:
 class SuperLas:
     def __init__(self):
         pass
-    
-    def process_file(self, file_path: str) -> dict:
-        encoder = LasEncoder(file_path)
-        new_name = encoder.update_encoding()
-        return {"status" : random.choice(["ok", "warn", "error"]),  # Это — глобальный статус результата процессинга. Если случился как минимум один warning — глобальный статус хотя бы "warn", если есть хоть один fatal error — глобальный статус равен "error" Сейчас рандомно для теста, потом по умному.
-                "description": "Всё отлично",
-                "features": 
-                    {
-                        "start_depth": 100,
-                        "stop_depth": 1000,
-                        "version": "1.1",
-                        "datetime": None,
-                        "company": random.choice([
-                            "Шизпром",
-                            "ШизГаз Уфа",
-                            "булкин и ко ко ко",
-                            "Ш.У.Е. Ltd"
-                        ]),
-                        "fieldName": random.choice([
-                            "Урен-гой",
-                            "Хаханты-манстйск",
-                            "Бульба",
-                            "Булкинасс",
-                            "Место Х"
-                        ]),
-                        "well": str(
-                            random.randint(100, 1000)
-                        ),
-                        "mnemonic_list_rus": ['ПС', "ИН", "A"],
-                        "mnemonic_list_eng": ['D', "O", "G"],
-                        "file_path": new_name,
-                    },
-                "errors": [
-                    {
-                        "status": random.choice(["warn", "error"]),
-                        "description": "LoremIsplum dolor sit amet"
-                    },
-                    {
-                        "status": random.choice(["warn", "error"]),
-                        "description": "LoremIsplum dolor sit amet"
-                    },
-                    {
-                        "status": random.choice(["warn", "error"]),
-                        "description": "LoremIsplum dolor sit amet"
-                    },
-                    {
-                        "status": random.choice(["warn", "error"]),
-                        "description": "LoremIsplum dolor sit amet"
-                    },
-                    {
-                        "status": random.choice(["warn", "error"]),
-                        "description": "LoremIsplum dolor sit amet"
-                    }
-                ]
-        }
         
     def process_file1(self, file_path: str) -> dict:
         encoder = LasEncoder(file_path)
@@ -88,10 +33,7 @@ class SuperLas:
         else:
             status = "ok"
             
-            
-        
-        # TODO replace mnemonics
-        
+                    
         if status != "error":
             curves = result[2].curves.keys()
             js = JsonController()
@@ -117,11 +59,11 @@ class SuperLas:
                 
             else:
                 features_sklad = {
-                    "start_depth": result[2].well['STRT'].value,
-                    "stop_depth": result[2].well['STOP'].value,
-                    "version": result[2].version['VERS'].value,
+                    "start_depth": float(result[2].well['STRT'].value),
+                    "stop_depth": float(result[2].well['STOP'].value),
+                    "version": str(result[2].version['VERS'].value),
                     "datetime": self.parse_date(result[2].well['DATE'].value),
-                    "well": result[2].well['WELL'].value,
+                    "well": str(result[2].well['WELL'].value),
                     "company": None,
                     "fieldName" : result[2].well['FLD'].value,
                     "mnemonic_list_rus": rus,
@@ -158,6 +100,9 @@ class SuperLas:
         
         
         if status != "error":
+            for i in range(len(rus)):
+                result[2].curves[i].mnemonic=rus[i]
+            print(result[2].curves.keys())
             with open(f"temp_files/{new_name}", "w" ,encoding="utf-8") as file:    
                 result[2].write(file)
             
@@ -206,8 +151,9 @@ class SuperLas:
 
         
 if __name__ == "__main__":
-    
-    
+        c = SuperLas()
+        print(c.process_file1("15_2.las"))
+"""    
     import os
     relative_path = os.path.join('temp_files')
 
@@ -215,6 +161,4 @@ if __name__ == "__main__":
 
 
     # Iterate through the files in the directory
-    for filename in os.listdir(absolute_path):
-        c = SuperLas()
-        print(c.process_file1(filename))
+    for filename in os.listdir(absolute_path):"""
