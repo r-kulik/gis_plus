@@ -1,6 +1,6 @@
 
 function addFilesToTable(responseData) {
-    
+    ;
 
     console.log('Response Data:', responseData); // Check the response data
     console.log(responseData.files)
@@ -42,6 +42,7 @@ function sendRequestToGetFiles(){
             type: 'GET',
             data: filters,
             success: (response) => {
+                $('#fileTable tbody').empty()
                 addFilesToTable(response);
             },
             error: function(xhr, status, error) {
