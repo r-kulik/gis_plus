@@ -198,7 +198,7 @@ class SuperLas:
             output_image_path = f"static/{file_name.split('.')[0]}.jpg"
             plt.savefig(output_image_path, dpi=90)
             
-            return output_image_path
+            return f"{file_name.split('.')[0]}.jpg"
         except:
             return "sad_cat.jpg"
 
