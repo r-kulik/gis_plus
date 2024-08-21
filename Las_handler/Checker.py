@@ -54,9 +54,14 @@ class LASchecker():
                       'VERS item not found in the ~V section.',\
                         'WRAP item not found in the ~V section']
         if not 'WRAP' in self.las.version.keys():
-            print(self.las.version)
             self.las.version.append(lasio.HeaderItem('WRAP', value='NO', descr='Data Wrapping'))
             warns += ['WRAP item not found in the ~V section']
+        if not 'NULL' in self.las.well.keys():
+            self.las.well.append(lasio.HeaderItem('NULL', value='-9999.25', descr='Null value'))
+            warns += ['WRAP item not found in the ~V section']
+        if self.las.well['NULL'].value not in ['-9999', '-999.25', '-9999.25']:
+            self.las.well['NULL'].value = '-9999.25'
+            warns += ["Wrong NULL value. Should be -9999, -999.25 or -9999.25. Replaced to -9999.25"]
         self.las.write('tamed.las') 
         self.lascheck = lascheck.read('tamed.las')
         print(warns)
@@ -71,7 +76,7 @@ class LASchecker():
             non_conformities.append("Amount of mnemonics doesn't match with curves amount")
         if not self.check_spaces()[0]:
            non_conformities.append("Additional whitespaces in {}".format(self.check_spaces()[1]))
-        return non_conformities
+        return non_conformities, warns
 
 
 relative_path = os.path.join('Las_handler', 'Encoded', 'LAS_NGE.93394')
