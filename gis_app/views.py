@@ -1,3 +1,4 @@
+import zipfile
 from django.shortcuts import render # type: ignore
 from django.http import HttpResponse, HttpRequest, JsonResponse # type: ignore
 from django.views.decorators.csrf import csrf_exempt # type: ignore
@@ -77,7 +78,7 @@ def exportFiles(request: HttpRequest) -> HttpResponse:
         start_measure_till_depth_filter = request.GET.get('startMeasureTillDepthDepthFilter', None)
         finish_measure_till_depth_filter = request.GET.get('finishMeasureTillDepthDepthFilter', None)
         companies_filter = request.GET.get('companiesFilter', None)
-        metrics_filter = request.GET.get('metricsFilter', )
+        metrics_filter = request.GET.get('metricsFilter', [])
         start_year_filter = request.GET.get('startYearFilter', None)
         finish_year_filter = request.GET.get('finishYearFilter', None)
 
@@ -238,7 +239,8 @@ def upload_file(request):
             file_version = features.get('version', None)
             start_depth = features.get('start_depth', None)
             stop_depth = features.get('stop_depth', None)
-            datetime_value = features.get('datetime')
+            datetime_value = features.get('datetime', None)
+        
             file_data.append({
                     "status": process_result.get('status', 'error'),
                     'name': file.name,
@@ -272,6 +274,10 @@ def save_to_database(request):
             well, _ = get_or_create_well(file_entry['well_number'], field_name=file_entry['company_name'])
             metrics = [get_or_create_metric(metric_name)[0] for metric_name in file_entry['metrics_list']]
             
+
+            print(file_entry['processedFilePath'])
+            # костыль!
+            if file_entry['datetime'] == '': file_entry['datetime'] = None
             file_entry_model = Files(
                 filePath=file_entry['name'],
                 fileVersion=file_entry['file_version'],
@@ -288,3 +294,31 @@ def save_to_database(request):
 
         return JsonResponse({'status': 'success'})
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+@csrf_exempt
+def downloadFiles(request):
+    if request.method == 'POST':
+        selected_files = request.POST.getlist('files')
+        zip_filename = 'exported_files.zip'
+        temp_zip = zipfile.ZipFile(zip_filename, 'w')
+
+        for file_id in selected_files:
+            try:
+                file_obj = Files.objects.get(fileId=file_id)
+                file_path = file_obj.internalStoragePath
+                if os.path.exists(file_path):
+                    temp_zip.write(file_path, os.path.basename(file_path))
+                else:
+                    print(f"File not found: {file_path}")
+            except Files.DoesNotExist:
+                print(f"File with ID {file_id} does not exist")
+
+        temp_zip.close()
+
+        with open(zip_filename, 'rb') as zip_file:
+            response = HttpResponse(zip_file.read(), content_type='application/zip')
+            response['Content-Disposition'] = f'attachment; filename={zip_filename}'
+            return response
+
+    return HttpResponse('Invalid request', status=400)
