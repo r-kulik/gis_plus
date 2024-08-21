@@ -20,6 +20,7 @@ class LasEncoder:
             file_bytes = input_file.read()
 
         decoded_string = file_bytes.decode(self.get_encoding())
+        decoded_string = decoded_string.replace('\n', '')
         
         save_dir = "Encoded"
         os.makedirs(save_dir, exist_ok=True)
