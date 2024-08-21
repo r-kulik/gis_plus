@@ -42,7 +42,8 @@ function loadAndProcessFiles(data) {
             warns_amount: warnsAmount,
             originalFilePath: file.originalFilePath,
             processedFilePath: file.processedFilePath,
-            isCheckboxDisabled: isCheckboxDisabled
+            isCheckboxDisabled: isCheckboxDisabled,
+            fileVersion: file.file_version
         };
 
         // Render the template with the fileRowData
@@ -93,7 +94,8 @@ function saveFilesToDatabase() {
                 datetime: $row.find('td:eq(7)').text(),
                 start_depth: $row.find('td:eq(9)').text(),
                 stop_depth: $row.find('td:eq(10)').text(),
-                processedFilePath: $row.find('.processedFilePathHolder').text()
+                processedFilePath: $row.find('.processedFilePathHolder').text(),
+                file_version: $row.fing('.fileVersionHolder').text()
             });
         }
     });

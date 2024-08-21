@@ -33,16 +33,10 @@
 
             <td style="display: none;" class='originalFilePathHolder'> ${originalFilePath} </td>
             <td style="display: none;" class='processedFilePathHolder'> ${processedFilePath} </td>
+            <td style="display: none;" class='fileVersionHolder'> ${fileVersion} </td>
         </tr>
     </script>
-
-    <header>
-        <nav class="header-container">
-            <img src="https://cdn.freebiesupply.com/logos/large/2x/gazprom-6-logo-black-and-white.png" alt="Gazprom-logo" class="gazprom-logo">
-            <button class="page-selection-button-active">Импорт файлов</button>
-            <button class="page-selection-button">Экспорт файлов</button>
-        </nav>
-    </header>
+    {% include 'header.html' %}
 
     <main class="content">
         <label for="fileInput" class="file-button">Выбрать файлы</label>
