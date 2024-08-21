@@ -11,6 +11,7 @@ import random
 import string
 from Las_handler.SuperLas import SuperLas
 from django.forms.models import model_to_dict
+import json
 
 
 def hello_world(request):
@@ -228,59 +229,66 @@ def upload_file(request):
             with open(file_path, 'wb+') as destination:
                 for chunk in file.chunks():
                     destination.write(chunk)
-            # вот здесь у нас магия проверки ласов
+            # Magic check for LAS files
             processer = SuperLas()
             process_result = processer.process_file(internalStoragePath)
 
             processed_file_path = None
-            if process_result.get('status', 'error') in ['warn', 'ok']:
-                features = process_result.get('features', {})
-                company_name = features.get('company', None)
-                well_number = features.get('well', None)
-                metrics_list = features.get('mnemonic_list_rus', []) + features.get('mnemonic_list_eng', [])
-                processed_file_path = features.get('file_path', None)
-                file_version = features.get('version', None)
-                start_depth = features.get('start_depth', None)
-                stop_depth = features.get('stop_depth', None)
-                datetime_value = features.get('datetime')
-
-                company, _ = get_or_create_company(company_name)
-                well, _ = get_or_create_well(well_number, field_name=company_name)  # Assuming field name is the same as company name for simplicity
-                metrics = [get_or_create_metric(metric_name)[0] for metric_name in metrics_list]
-                
-                file_entry = Files(
-                    filePath=file.name,
-                    fileVersion=file_version,
-                    startDepth=start_depth,
-                    stopDepth=stop_depth,
-                    datetime=datetime_value,
-                    company=company,
-                    well=well,
-                    internalStoragePath=processed_file_path 
-                )
-
-                file_entry.save()
-                # Add the many-to-many relationship
-                file_entry.metrics.set(metrics)
-                file_data.append({
+            features = process_result.get('features', {})
+            company_name = features.get('company', None)
+            well_number = features.get('well', None)
+            metrics_list = features.get('mnemonic_list_rus', []) + features.get('mnemonic_list_eng', [])
+            processed_file_path = features.get('file_path', None)
+            file_version = features.get('version', None)
+            start_depth = features.get('start_depth', None)
+            stop_depth = features.get('stop_depth', None)
+            datetime_value = features.get('datetime')
+            file_data.append({
                     "status": process_result.get('status', 'error'),
                     'name': file.name,
                     'size': file.size,
                     'originalFilePath': internalStoragePath,
                     'processedFilePath': processed_file_path,
                     'description': process_result.get('description', 'No description'),
-                    'database_entry': file_entry_to_dict(file_entry),
+                    'company_name': company_name,
+                    'well_number': well_number,
+                    'metrics_list': metrics_list,
+                    'file_version': file_version,
+                    'start_depth': start_depth,
+                    'stop_depth': stop_depth,
+                    'datetime': datetime_value,
                     'errors': process_result.get('errors', [])
-                })
-            else:
-                file_data.append({
-                    "status": process_result.get('status', 'error'),
-                    'name': file.name,
-                    'size': file.size,
-                    'originalFilePath': internalStoragePath,
-                    'processedFilePath': processed_file_path,
-                    'description': process_result.get('description', 'No description'),
-                    'errors': process_result.get('errors', [])
-                })
+            }
+            )
         return JsonResponse({'files': file_data})
     return JsonResponse({'error': 'No files uploaded'}, status=400)
+
+@csrf_exempt
+def save_to_database(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)  # Parse JSON data from the request body
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+        for file_entry in data:
+            company, _ = get_or_create_company(file_entry['company_name'])
+            well, _ = get_or_create_well(file_entry['well_number'], field_name=file_entry['company_name'])
+            metrics = [get_or_create_metric(metric_name)[0] for metric_name in file_entry['metrics_list']]
+            
+            file_entry_model = Files(
+                filePath=file_entry['name'],
+                fileVersion=file_entry['file_version'],
+                startDepth=file_entry['start_depth'],
+                stopDepth=file_entry['stop_depth'],
+                datetime=file_entry['datetime'],
+                company=company,
+                well=well,
+                internalStoragePath=file_entry['processedFilePath']
+            )
+
+            file_entry_model.save()
+            file_entry_model.metrics.set(metrics)
+
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
