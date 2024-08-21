@@ -694,7 +694,9 @@ class LASFile(object):
                spec.ValidDepthDividedByStep.check(self) and \
                spec.BlankLineInSection.check(self) and \
                spec.ValidUnitForDepth.check(self) and \
-               spec.NullValue.check(self)
+               spec.NullValue.check(self) and \
+               spec.WellIsNotNULL.check(self) and \
+               spec.FieldIsNotNULL.check(self)
 
     def get_non_conformities(self):
         if (spec.MandatorySections.check(self)) is False:
@@ -727,6 +729,12 @@ class LASFile(object):
         if (spec.NullValue.check(self)) is False:
             self.non_conformities.append(
                     "Wrong NULL value. Should be -9999, -999.25 or -9999.25")
+        if (spec.WellIsNotNULL.check(self)) is False:
+            self.non_conformities.append(
+                    "Well id must present in file")
+        if (spec.FieldIsNotNULL.check(self)) is False:
+            self.non_conformities.append(
+                    "Field name must present in file")
         return self.non_conformities
 
 

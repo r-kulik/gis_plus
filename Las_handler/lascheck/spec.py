@@ -77,10 +77,14 @@ class WellIsNotNULL(Rule):
     @staticmethod
     def check(las_file):
         if "Well" in las_file.sections:
-            if las_file.well['WELL'] != '' and las_file.well['WELL'] 
-            mandatory_lines = ["STRT", "STOP", "STEP", "NULL", "WELL", "FLD", "DATE"]
-            mandatory_sections_found = all(elem in las_file.well for elem in mandatory_lines)
-            if mandatory_sections_found:
+            if las_file.well['WELL'].value != '' and las_file.well['WELL'].value:
+                return True
+        return False
+class FieldIsNotNULL(Rule):
+    @staticmethod
+    def check(las_file):
+        if "Well" in las_file.sections:
+            if las_file.well['FLD'].value != '' and las_file.well['FLD'].value:
                 return True
         return False
 
