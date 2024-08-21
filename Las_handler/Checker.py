@@ -1,5 +1,8 @@
 import lasio
-import Las_handler.lascheck as lascheck
+try:
+    import Las_handler.lascheck as lascheck
+except ModuleNotFoundError:
+    import lascheck as la
 import statistics
 import os
 
