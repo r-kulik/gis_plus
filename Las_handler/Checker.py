@@ -21,7 +21,7 @@ class LASchecker():
             self.error = 0
         except (lasio.exceptions.LASHeaderError, lasio.exceptions.LASDataError, lasio.exceptions.LASUnknownUnitError):
             exception_type, exception_value, exception_traceback = sys.exc_info()
-            self.error = [exception_value], [], None
+            self.error = [str(exception_value), 'wrong format in this string'], [], None
         except Exception:
             self.error = [sys.exc_info()[0], ':', sys.exc_info()[1]], [], None
 
@@ -106,6 +106,7 @@ if __name__ == "__main__":
 
     absolute_path = os.path.abspath(relative_path)
 
+
     # Iterate through the files in the directory
     for filename in os.listdir(absolute_path):
         print(filename)
@@ -114,4 +115,10 @@ if __name__ == "__main__":
         checker = LASchecker(file_path)
         res = checker.check()
         print(res)
+    '''relative_path = os.path.join('temp_files', '42.las')
+
+    absolute_path = os.path.abspath(relative_path)
+    checker = LASchecker(absolute_path)
+    res = checker.check()
+    print(res)'''
         
