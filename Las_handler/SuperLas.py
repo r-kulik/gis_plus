@@ -1,4 +1,5 @@
 from LasEncoder import LasEncoder
+from Checker import LASchecker
 
 class SuperLas:
     def __init__(self):
@@ -44,6 +45,13 @@ class SuperLas:
                 ]
         }
         
-    def process_file(self, file_path: str) -> dict:
+    def process_file1(self, file_path: str) -> dict:
         encoder = LasEncoder(file_path)
         new_name = encoder.update_encoding()
+        
+        """checker = LASchecker(f"../temp_files/{new_name}")
+        checker.check()"""
+        
+if __name__ == "__main__":
+    c = SuperLas()
+    c.process_file1("10_IK.las")
