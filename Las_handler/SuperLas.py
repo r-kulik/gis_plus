@@ -1,3 +1,5 @@
+from LasEncoder import LasEncoder
+
 class SuperLas:
     def __init__(self):
         pass
@@ -41,3 +43,7 @@ class SuperLas:
                     }
                 ]
         }
+        
+    def process_file(self, file_path: str) -> dict:
+        encoder = LasEncoder(file_path)
+        new_name = encoder.update_encoding()
