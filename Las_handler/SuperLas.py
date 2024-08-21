@@ -59,11 +59,11 @@ class SuperLas:
                 
             else:
                 features_sklad = {
-                    "start_depth": result[2].well['STRT'].value,
-                    "stop_depth": result[2].well['STOP'].value,
-                    "version": result[2].version['VERS'].value,
+                    "start_depth": float(result[2].well['STRT'].value),
+                    "stop_depth": float(result[2].well['STOP'].value),
+                    "version": str(result[2].version['VERS'].value),
                     "datetime": self.parse_date(result[2].well['DATE'].value),
-                    "well": result[2].well['WELL'].value,
+                    "well": str(result[2].well['WELL'].value),
                     "company": None,
                     "fieldName" : result[2].well['FLD'].value,
                     "mnemonic_list_rus": rus,
