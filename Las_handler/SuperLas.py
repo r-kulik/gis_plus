@@ -158,48 +158,49 @@ class SuperLas:
                     return None
     
     def get_image(self, file_name):
-        import matplotlib.pyplot as plt
+        try:
+            # Step 1: Read the LAS file
+            las_file_path = f"temp_files/{file_name}"
+            las = lasio.read(las_file_path)
 
-        # Step 1: Read the LAS file
-        las_file_path = f"temp_files/{file_name}"
-        las = lasio.read(las_file_path)
+            # Step 2: Extract log data into a pandas DataFrame
+            cur = las.curves
+            labels = []
+            for i in range(len(cur)):
+                labels.append(f"{cur[i].mnemonic}, {cur[i].unit}")
+            x_label = labels[0]
+            y_labels = labels[1::]
 
-        # Step 2: Extract log data into a pandas DataFrame
-        cur = las.curves
-        labels = []
-        for i in range(len(cur)):
-            labels.append(f"{cur[i].mnemonic}, {cur[i].unit}")
-        x_label = labels[0]
-        y_labels = labels[1::]
+            df = las.df()
+            x = df.index
+            df = df.reset_index(drop=True)
+            curve_names = list(df.columns)
+            num = len(y_labels)
 
-        df = las.df()
-        x = df.index
-        df = df.reset_index(drop=True)
-        curve_names = list(df.columns)
-        num = len(y_labels)
+            fig, axs = plt.subplots(1, num, figsize=(num * 4, 12), sharey=True)
+            cmap = plt.get_cmap('tab10')  # You can choose any colormap you prefer
 
-        fig, axs = plt.subplots(1, num, figsize=(num * 4, 12), sharey=True)
-        cmap = plt.get_cmap('tab10')  # You can choose any colormap you prefer
+            if num != 1:
+                for i in range(len(y_labels)):
+                    axs[i].plot(df[curve_names[i]], x, color=cmap(i % 10))  # Note the swap of x and df[curve_names[i+1]]
+                    axs[i].set_xlabel(y_labels[i])
+                    axs[i].set_ylabel(x_label)
+                    axs[i].grid(True)  # Add grid to each subplot
+            else:
+                for i in range(len(y_labels)):
+                    axs.plot(df[curve_names[i]], x, color=cmap(i % 10))  # Note the swap of x and df[curve_names[i+1]]
+                    axs.set_xlabel(y_labels[i])
+                    axs.set_ylabel(x_label)
+                    axs.grid(True)  # Add grid to the single subplot
 
-        if num != 1:
-            for i in range(len(y_labels)):
-                axs[i].plot(df[curve_names[i]], x, color=cmap(i % 10))  # Note the swap of x and df[curve_names[i+1]]
-                axs[i].set_xlabel(y_labels[i])
-                axs[i].set_ylabel(x_label)
-                axs[i].grid(True)  # Add grid to each subplot
-        else:
-            for i in range(len(y_labels)):
-                axs.plot(df[curve_names[i]], x, color=cmap(i % 10))  # Note the swap of x and df[curve_names[i+1]]
-                axs.set_xlabel(y_labels[i])
-                axs.set_ylabel(x_label)
-                axs.grid(True)  # Add grid to the single subplot
-
-        plt.gca().invert_yaxis()  # Invert the y-axis to show depth from top to bottom
-        plt.tight_layout()
-        output_image_path = f"{file_name.split('.')[0]}.jpg"
-        plt.savefig(output_image_path, dpi=90)
-        
-        return output_image_path
+            plt.gca().invert_yaxis()  # Invert the y-axis to show depth from top to bottom
+            plt.tight_layout()
+            output_image_path = f"static/{file_name.split('.')[0]}.jpg"
+            plt.savefig(output_image_path, dpi=90)
+            
+            return output_image_path
+        except:
+            return "sad_cat.jpg"
 
 
         
