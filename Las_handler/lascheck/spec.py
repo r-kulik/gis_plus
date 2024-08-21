@@ -44,8 +44,6 @@ class MandatorySections(Rule):
     @staticmethod
     def get_missing_mandatory_sections(las_file):
         missing_mandatory_sections = []
-        if "Version" not in las_file.sections:
-            missing_mandatory_sections.append("~V")
         if "Well" not in las_file.sections:
             missing_mandatory_sections.append("~W")
         if "Curves" not in las_file.sections:
