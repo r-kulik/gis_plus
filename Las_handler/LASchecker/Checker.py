@@ -50,11 +50,15 @@ class LASchecker():
     def check(self):
         warns = []
         if not "Version" in self.lascheck.sections.keys():
-            warns += ['Header section Version regexp=~V was not found.',\
+            warns += ['Err: Header section Version regexp=~V was not found. Created ~V section.',\
                       'VERS item not found in the ~V section.',\
                         'WRAP item not found in the ~V section']
-            self.las.write('tamed.las') 
-            self.lascheck = lascheck.read('tamed.las')
+        if not 'WRAP' in self.las.version.keys():
+            print(self.las.version)
+            self.las.version.append(lasio.HeaderItem('WRAP', value='NO', descr='Data Wrapping'))
+            warns += ['WRAP item not found in the ~V section']
+        self.las.write('tamed.las') 
+        self.lascheck = lascheck.read('tamed.las')
         print(warns)
         print(self.las.version)
         print(self.lascheck.version)
@@ -70,8 +74,9 @@ class LASchecker():
         return non_conformities
 
 
-relative_path = os.path.join('.', 'Las_handler', 'Encoded', 'LAS_NGE.93394')
+relative_path = os.path.join('Las_handler', 'Encoded', 'LAS_NGE.93394')
 
 absolute_path = os.path.abspath(relative_path)
+laaa = lasio.read(absolute_path)
 checker = LASchecker(absolute_path)
 print(checker.check())
