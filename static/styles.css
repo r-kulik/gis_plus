@@ -16,7 +16,6 @@ header {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 0.625em; /* 10px */
 }
 
 table td {
@@ -47,23 +46,6 @@ input[list]:focus {
     box-shadow: 0 0 0.3125em rgba(102, 175, 233, 0.5); /* 5px */
 }
 
-.trtrtr {
-    text-align: left;
-    font-size: 1em; /* Default font size */
-    margin: 1em auto;
-}
-
-/* Media queries for responsive font sizing */
-@media (max-width: 600px) {
-    .trtrtr {
-        font-size: 0.9em;
-    }
-}
-@media (max-width: 400px) {
-    .trtrtr {
-        font-size: 0.8em;
-    }
-}
 
 .checkbox-wrapper {
     --borderColor: #48c;
@@ -196,10 +178,17 @@ input[list]:focus {
     display: none;
 }
 
+.satus-circle {
+    width: 1vw;
+    height: 1vw;
+    border-radius: 50%;
+    align-items: center;
+}
+
 .search-button {
     display: inline-block;
     padding: 12px 20px;
-    margin: 0 10px;
+    margin: 0 1em 1em 0;
     font-size: 1vw;
     text-decoration: none;
     color: white;
@@ -213,7 +202,6 @@ input[list]:focus {
 .export-button {
     float: right;
     padding: 12px 20px;
-    margin: 0 10px;
     font-size: 1vw;
     text-decoration: none;
     color: white;
@@ -225,9 +213,9 @@ input[list]:focus {
 }
 
 .file-button, .upload-button {
-    padding: 12px 20px;
-    margin-bottom: 1em;
-    font-size: 1;
+    padding: 1em 1em;
+    margin: 1em 1em 1em 0;
+    font-size: 1vw;
     color: white;
     background-color: #2994E8;
     border: none;

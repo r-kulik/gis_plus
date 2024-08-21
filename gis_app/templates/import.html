@@ -11,13 +11,15 @@
 <body>
 
     <script type="text/x-jquery-tmpl" id="fileRowTemplate">
-        <tr class="trtrtr">
+        <tr>
             <td>
                 <div class="checkbox-wrapper">
                     <input type="checkbox"/>
                 </div>
             </td>
-            <td> ${status_color}</td>
+            <td> 
+                <div class="satus-circle" style="background: ${status_color};"></div>
+            </td>
             <td> ${fatal_amount} / ${warns_amount} </td> 
             <td>${fileName}</td>
             <td>${fieldName}</td>
@@ -28,8 +30,8 @@
             <td>${startDepth}</td>
             <td>${stopDepth}</td>
 
-            <td display=none class='originalFilePathHolder'> ${originalFilePath} </td>
-            <td display=none class='processedFilePathHolder'> ${processedFilePath} </td>
+            <td style="display: none;" class='originalFilePathHolder'> ${originalFilePath} </td>
+            <td style="display: none;" class='processedFilePathHolder'> ${processedFilePath} </td>
         </tr>
     </script>
 
