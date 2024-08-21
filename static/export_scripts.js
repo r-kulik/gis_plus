@@ -69,6 +69,8 @@ function exportSelectedFiles() {
         return;
     }
 
+    console.log(selectedFiles)
+
     // Send the selected file IDs to the server
     $.ajax({
         url: '/downloadFiles/',
