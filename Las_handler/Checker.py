@@ -21,9 +21,9 @@ class LASchecker():
             self.error = 0
         except (lasio.exceptions.LASHeaderError, lasio.exceptions.LASDataError, lasio.exceptions.LASUnknownUnitError):
             exception_type, exception_value, exception_traceback = sys.exc_info()
-            self.error = [], [exception_value]
+            self.error = [exception_value], [], None
         except Exception:
-            self.error = [], [sys.exc_info()[0], ':', sys.exc_info()[1]]
+            self.error = [sys.exc_info()[0], ':', sys.exc_info()[1]], [], None
 
     def calculate_step(self):
         depth_values = self.las.curves[0].data
