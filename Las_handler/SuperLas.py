@@ -74,6 +74,7 @@ class SuperLas:
     def process_file1(self, file_path: str) -> dict:
         encoder = LasEncoder(file_path)
         new_name = encoder.update_encoding()
+        print(new_name)
         
         checker = LASchecker(f"temp_files/{new_name}")
         result = checker.check()
@@ -205,5 +206,15 @@ class SuperLas:
 
         
 if __name__ == "__main__":
-    c = SuperLas()
-    print(c.process_file1("10_IK.las"))
+    
+    
+    import os
+    relative_path = os.path.join('temp_files')
+
+    absolute_path = os.path.abspath(relative_path)
+
+
+    # Iterate through the files in the directory
+    for filename in os.listdir(absolute_path):
+        c = SuperLas()
+        print(c.process_file1(filename))
