@@ -1,3 +1,4 @@
+import random 
 from LasEncoder import LasEncoder
 from Checker import LASchecker
 
@@ -6,7 +7,7 @@ class SuperLas:
         pass
     
     def process_file(self, file_path: str) -> dict:
-        return {"status" : "ok",  # Это — глобальный статус результата процессинга. Если случился как минимум один warning — глобальный статус хотя бы "warn", если есть хоть один fatal error — глобальный статус равен "error"
+        return {"status" : random.choice(["ok", "warn", "error"]),  # Это — глобальный статус результата процессинга. Если случился как минимум один warning — глобальный статус хотя бы "warn", если есть хоть один fatal error — глобальный статус равен "error" Сейчас рандомно для теста, потом по умному.
                 "description": "Всё отлично",
                 "features": 
                     {
@@ -23,23 +24,23 @@ class SuperLas:
                     },
                 "errors": [
                     {
-                        "status": "warn",
+                        "status": random.choice(["warn", "error"]),
                         "description": "LoremIsplum dolor sit amet"
                     },
                     {
-                        "status": "warn",
+                        "status": random.choice(["warn", "error"]),
                         "description": "LoremIsplum dolor sit amet"
                     },
                     {
-                        "status": "warn",
+                        "status": random.choice(["warn", "error"]),
                         "description": "LoremIsplum dolor sit amet"
                     },
                     {
-                        "status": "error",
+                        "status": random.choice(["warn", "error"]),
                         "description": "LoremIsplum dolor sit amet"
                     },
                     {
-                        "status": "error",
+                        "status": random.choice(["warn", "error"]),
                         "description": "LoremIsplum dolor sit amet"
                     }
                 ]

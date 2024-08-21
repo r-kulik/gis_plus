@@ -1,6 +1,6 @@
 
 function addFilesToTable(responseData) {
-    $('#fileTable tbody').empty();
+    
 
     console.log('Response Data:', responseData); // Check the response data
     console.log(responseData.files)
