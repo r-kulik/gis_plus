@@ -18,6 +18,10 @@ table {
     border-collapse: collapse;
 }
 
+thead {
+    font-size: 1vw;
+}
+
 table td {
     padding: 0.625em; /* 10px */
     border: 0.0625em solid #ccc; /* 1px */
@@ -36,7 +40,7 @@ input[list] {
     box-sizing: border-box;
     border: 0.0625em solid #ccc; /* 1px */
     border-radius: 0.25em; /* 4px */
-    font-size: 1em; /* 16px */
+    font-size: 1vw; /* 16px */
 }
 
 input[type="text"]:focus,
@@ -57,12 +61,11 @@ input[list]:focus {
     appearance: none;
     vertical-align: middle;
     background: #fff;
-    font-size: 1.8em;
     border-radius: 0.125em;
     display: inline-block;
     border: var(--borderWidth) solid var(--borderColor);
-    width: .75em;
-    height: .75em;
+    width: .5vw;
+    height: .5vw;
     position: relative;
 }
 
@@ -133,7 +136,7 @@ input[list]:focus {
 }
 
 .gazprom-logo {
-    height: 100px;
+    height: 7.5vw;
     padding-left: 1em;
 }
 
@@ -151,7 +154,7 @@ input[list]:focus {
     background-color: #2994E8;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: .5em;
     cursor: pointer;
     transition: background-color 0.5s ease
 }
@@ -167,7 +170,7 @@ input[list]:focus {
     background-color: #f1f0ea;
     color: black;
     border: none;
-    border-radius: 5px;
+    border-radius: .5em;
     cursor: pointer;
     transition: background-color 0.5s ease
 }
@@ -196,7 +199,7 @@ input[list]:focus {
     color: white;
     background-color: #2994E8;
     border: none;
-    border-radius: 5px;
+    border-radius: .5em;
     cursor: pointer;
     transition: background-color 0.5s ease;
 }
@@ -209,19 +212,19 @@ input[list]:focus {
     color: white;
     background-color: #2994E8;
     border: none;
-    border-radius: 5px;
+    border-radius: .5em;
     cursor: pointer;
     transition: background-color 0.5s ease;
 }
 
 .file-button, .upload-button {
     padding: 1em 1em;
-    margin: 1em 1em 1em 0;
+    margin: 1vw 1vw 1vw 0;
     font-size: 1vw;
     color: white;
     background-color: #2994E8;
     border: none;
-    border-radius: 5px;
+    border-radius: .5em;
     cursor: pointer;
     transition: background-color 0.5s ease;
 }
