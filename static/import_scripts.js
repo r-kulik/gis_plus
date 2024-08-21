@@ -47,7 +47,12 @@ function loadAndProcessFiles(data) {
         };
 
         // Render the template with the fileRowData
-        $('#fileRowTemplate').tmpl(fileRowData).appendTo('#fileTable tbody');
+        var $row = $('#fileRowTemplate').tmpl(fileRowData).appendTo('#fileTable tbody');
+
+        // Check the checkbox for rows with 'ok' status
+        if (file.status === 'ok') {
+            $row.find('input[type="checkbox"]').prop('checked', true);
+        }
     });
 
     // Show the save button
