@@ -1,6 +1,7 @@
 import lasio
 import lascheck
 import statistics
+import os
 
 class LASchecker():
     def __init__(self, filepath: str):
@@ -39,26 +40,38 @@ class LASchecker():
             for j in ['mnemonic', 'unit']:
                 if ' ' in str(i[j]): return [False, '~V section']
         return [True]
+    def check_for_potentially_deadly(self):
+        fixed = []
+        if not 'VERS' in self.las.version.keys(): pass
+        if not 'WRAP' in self.las.version.keys(): return "WRAP not in ~V section"
+        if not 'NULL' in self.las.well.keys(): return "NULL not in ~V section"
 
 
     def check(self):
+        warns = []
+        if not "Version" in self.lascheck.sections.keys():
+            warns += ['Header section Version regexp=~V was not found.',\
+                      'VERS item not found in the ~V section.',\
+                        'WRAP item not found in the ~V section']
+            self.las.write('tamed.las') 
+            self.lascheck = lascheck.read('tamed.las')
+        print(warns)
+        print(self.las.version)
+        print(self.lascheck.version)
+        print(self.las.version.keys())
+        first_problems = self.check_for_potentially_deadly()
         self.step()
         self.lascheck.check_conformity()
         non_conformities = self.lascheck.get_non_conformities()
         if not self.amount_mnem_check():
             non_conformities.append("Amount of mnemonics doesn't match with curves amount")
         if not self.check_spaces()[0]:
-            non_conformities.append("Additional whitespaces in {}".format(self.check_spaces()[1]))
+           non_conformities.append("Additional whitespaces in {}".format(self.check_spaces()[1]))
         return non_conformities
 
 
-checker = LASchecker("1.las")
+relative_path = os.path.join('.', 'Las_handler', 'Encoded', 'LAS_NGE.93394')
+
+absolute_path = os.path.abspath(relative_path)
+checker = LASchecker(absolute_path)
 print(checker.check())
-
-'''print(check_spaces(las2))
-
-calculate_step(las2)
-las2.write("12.las")
-print(las.check_conformity())
-print(las.get_non_conformities())
-print(amount_mnem_check(las2))'''
