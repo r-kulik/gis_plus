@@ -1,3 +1,4 @@
+import zipfile
 from django.shortcuts import render # type: ignore
 from django.http import HttpResponse, HttpRequest, JsonResponse # type: ignore
 from django.views.decorators.csrf import csrf_exempt # type: ignore
@@ -273,6 +274,8 @@ def save_to_database(request):
             well, _ = get_or_create_well(file_entry['well_number'], field_name=file_entry['company_name'])
             metrics = [get_or_create_metric(metric_name)[0] for metric_name in file_entry['metrics_list']]
             
+
+            print(file_entry['processedFilePath'])
             # костыль!
             if file_entry['datetime'] == '': file_entry['datetime'] = None
             file_entry_model = Files(
@@ -291,3 +294,31 @@ def save_to_database(request):
 
         return JsonResponse({'status': 'success'})
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+@csrf_exempt
+def downloadFiles(request):
+    if request.method == 'POST':
+        selected_files = request.POST.getlist('files')
+        zip_filename = 'exported_files.zip'
+        temp_zip = zipfile.ZipFile(zip_filename, 'w')
+
+        for file_id in selected_files:
+            try:
+                file_obj = Files.objects.get(fileId=file_id)
+                file_path = file_obj.internalStoragePath
+                if os.path.exists(file_path):
+                    temp_zip.write(file_path, os.path.basename(file_path))
+                else:
+                    print(f"File not found: {file_path}")
+            except Files.DoesNotExist:
+                print(f"File with ID {file_id} does not exist")
+
+        temp_zip.close()
+
+        with open(zip_filename, 'rb') as zip_file:
+            response = HttpResponse(zip_file.read(), content_type='application/zip')
+            response['Content-Disposition'] = f'attachment; filename={zip_filename}'
+            return response
+
+    return HttpResponse('Invalid request', status=400)
