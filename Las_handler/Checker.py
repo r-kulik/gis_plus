@@ -6,8 +6,8 @@ import os
 class LASchecker():
     def __init__(self, filepath: str):
         #super(LASchecker, self).__init__()
-        self.lascheck = lascheck.read(filepath)
-        self.las = lasio.read(filepath)
+        self.lascheck = lascheck.read(filepath, encoding='utf-8')
+        self.las = lasio.read(filepath, encoding='utf-8')
 
     def calculate_step(self):
         depth_values = self.las.curves[0].data
@@ -53,21 +53,22 @@ class LASchecker():
             warns += ['Err: Header section Version regexp=~V was not found. Created ~V section.',\
                       'VERS item not found in the ~V section.',\
                         'WRAP item not found in the ~V section']
+        if not 'VERS' in self.las.version.keys():
+            self.las.version.append(lasio.HeaderItem('VERS', value=2.0, descr=': VERSION 2.0'))
+            warns += ['VERS item not found in the ~V section']
         if not 'WRAP' in self.las.version.keys():
             self.las.version.append(lasio.HeaderItem('WRAP', value='NO', descr='Data Wrapping'))
             warns += ['WRAP item not found in the ~V section']
         if not 'NULL' in self.las.well.keys():
             self.las.well.append(lasio.HeaderItem('NULL', value='-9999.25', descr='Null value'))
-            warns += ['WRAP item not found in the ~V section']
+            warns += ['NULL item not found in the ~W section']
         if self.las.well['NULL'].value not in ['-9999', '-999.25', '-9999.25']:
             self.las.well['NULL'].value = '-9999.25'
             warns += ["Wrong NULL value. Should be -9999, -999.25 or -9999.25. Replaced to -9999.25"]
-        self.las.write('tamed.las') 
-        self.lascheck = lascheck.read('tamed.las')
+        with open('tamed.las', 'w', encoding='utf-8') as f:
+            self.las.write(f)
+        self.lascheck = lascheck.read('tamed.las', encoding='utf-8')
         print(warns)
-        print(self.las.version)
-        print(self.lascheck.version)
-        print(self.las.version.keys())
         first_problems = self.check_for_potentially_deadly()
         self.step()
         self.lascheck.check_conformity()
@@ -78,10 +79,10 @@ class LASchecker():
            non_conformities.append("Additional whitespaces in {}".format(self.check_spaces()[1]))
         return non_conformities, warns
 
+if __name__ == "__main__":
+    relative_path = os.path.join('temp_files', '15_1.las')
 
-relative_path = os.path.join('Las_handler', 'Encoded', 'LAS_NGE.93394')
-
-absolute_path = os.path.abspath(relative_path)
-laaa = lasio.read(absolute_path)
-checker = LASchecker(absolute_path)
-print(checker.check())
+    absolute_path = os.path.abspath(relative_path)
+    laaa = lasio.read(absolute_path)
+    checker = LASchecker(absolute_path)
+    print(checker.check())
