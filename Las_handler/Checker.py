@@ -1,5 +1,5 @@
 import lasio
-import lascheck
+import Las_handler.lascheck as lascheck
 import statistics
 import os
 

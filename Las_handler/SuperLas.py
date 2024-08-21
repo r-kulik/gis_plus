@@ -1,6 +1,6 @@
 import random 
-from LasEncoder import LasEncoder
-from Checker import LASchecker
+from Las_handler.LasEncoder import LasEncoder
+from Las_handler.Checker import LASchecker
 
 class SuperLas:
     def __init__(self):

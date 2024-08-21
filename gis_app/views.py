@@ -61,15 +61,11 @@ def hello_world(request):
     return HttpResponse("Hello, World!")
 
 
-def import_view(request: HttpRequest) -> HttpResponse:
-    return render(
-        request, 'import.html'
-    )
+def import_view(request):
+    return render(request, 'import.html', {'current_page': 'import'})
 
-def export_view(request: HttpRequest) -> HttpResponse:
-    return render(
-        request, 'export.html'
-    )
+def export_view(request):
+    return render(request, 'export.html', {'current_page': 'export'})
 
 def exportFiles(request: HttpRequest) -> HttpResponse:
     if request.method == 'GET':
