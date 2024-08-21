@@ -9,7 +9,7 @@ body {
 header {
     background-color: #008fff;
     color: #f1f0ea;
-    padding: 1rem 0;
+    padding: 1vw 0;
     text-align: left;
 }
 
@@ -23,33 +23,32 @@ thead {
 }
 
 table td {
-    padding: 0.625em; /* 10px */
-    border: 0.0625em solid #ccc; /* 1px */
+    padding: 0.625em; 
+    border: 0.0625em solid #ccc;
 }
 
 h2 {
-    margin: 0 0 0.625em; /* 10px */
-    font-size: 1.5em; /* 24px */
+    margin: 0 0 0.625em;
+    font-size: 1.5em; 
     color: #333;
 }
 
 input[type="text"],
 input[list] {
     width: 100%;
-    padding: 0.5em; /* 8px */
+    padding: 0.5em;
     box-sizing: border-box;
-    border: 0.0625em solid #ccc; /* 1px */
-    border-radius: 0.25em; /* 4px */
-    font-size: 1vw; /* 16px */
+    border: 0.0625em solid #ccc;
+    border-radius: 0.25em;
+    font-size: 1vw;
 }
 
 input[type="text"]:focus,
 input[list]:focus {
     border-color: #008fff;
     outline: none;
-    box-shadow: 0 0 0.3125em rgba(102, 175, 233, 0.5); /* 5px */
+    box-shadow: 0 0 0.3125em rgba(102, 175, 233, 0.5); 
 }
-
 
 .checkbox-wrapper {
     --borderColor: #48c;
@@ -115,9 +114,9 @@ input[list]:focus {
 .filter-block {
     font-size: 1vw;
     background-color: #fff;
-    padding: 1.25em; /* 20px */
-    border-radius: 0.5em; /* 8px */
-    box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.1); /* 10px */
+    padding: 1.25em;
+    border-radius: 0.5em; 
+    box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.1);
     margin: 1em auto;
 }
 
@@ -150,7 +149,7 @@ input[list]:focus {
 .page-selection-button {
     font-size: 1vw;
     padding: 1vw 2vw;
-    margin-left: 10px;
+    margin-left: 1vw;
     background-color: #2994E8;
     color: white;
     border: none;
@@ -166,7 +165,7 @@ input[list]:focus {
 .page-selection-button-active {
     font-size: 1vw;
     padding: 1vw 2vw;
-    margin-left: 10px;
+    margin-left: 1vw;
     background-color: #f1f0ea;
     color: black;
     border: none;
