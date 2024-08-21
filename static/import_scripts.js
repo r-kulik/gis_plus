@@ -1,6 +1,7 @@
 function loadAndProcessFiles(data) {
     // Clear the existing rows in the table body
 
+
     // Iterate over each file in the data
     $.each(data.files, function(i, file) {
         // Determine the color based on the status
@@ -127,7 +128,7 @@ function saveFilesToDatabase() {
 }
 
 $(document).ready(function() {
-    $('#uploadButton').click(function() {
+    $('#fileInput').on('change', function() {
         $('#fileTable tbody').empty();
         var files = $('#fileInput')[0].files;
         uploadFilesSequentially(files, 0); // Start with the first file
