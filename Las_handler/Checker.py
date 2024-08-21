@@ -4,6 +4,7 @@ import sys
 import statistics
 import os
 import math
+import re
 
 
 try:
@@ -38,6 +39,22 @@ class LASchecker():
             return ["Was not appropriate step. Calculated, choose step {}".format(self.las.well.step.value)]
         return []
 
+    def stop(self):
+        if not 'STOP' in self.las.well.keys():
+            self.las.well.append(lasio.HeaderItem('STOP', unit=self.las.well["STRT"].unit, value='', descr='Stop'))
+        if self.las.well['STOP'].value == '':
+            self.las.well['STOP'].value = self.calculate_step()
+            return ["Was not appropriate stop value. Choose stop {}".format(self.las.data[-1])]
+        return []
+    
+    def start(self):
+        if not 'STRT' in self.las.well.keys():
+            self.las.well.append(lasio.HeaderItem('STRT', unit=self.las.well["STOP"].unit, value='', descr='Start'))
+        if self.las.well['STRT'].value == '':
+            self.las.well['STRT'].value = self.calculate_step()
+            return ["Was not appropriate start value. Choose start {}".format(self.las.data[0])]
+        return []
+
     def amount_mnem_check(self):
         equal = (len(self.las.curves) == self.las.data.shape[1])
         for i in self.las.curves:
@@ -59,13 +76,24 @@ class LASchecker():
             for j in ['mnemonic', 'unit']:
                 if ' ' in str(i[j]): return [False, '~V section']
         return [True]
+    
+    def check_sections(self):
+        pattern = r'~[A-Za-z]'
+        with open(self.filepath, 'r') as f:
+            text = f.read()
+        matches = re.findall(pattern, text)
+        doubles = list(set([x for x in matches if matches.count(x) > 1]))
+        err = [("Duplicated section " + i) for i in doubles]
+        if matches[-1] != '~A':
+            err += ["~A should be a last section"]
+        return err
 
 
     def check(self):
-        if self.error != 0:
-            return self.error
+        errors = self.check_sections()
+        if len(errors) != 0:
+            return errors, [], None
         warns = []
-        errors = []
         if not "Version" in self.lascheck.sections.keys():
             warns += ['Err: Header section Version regexp=~V was not found. Created ~V section.',\
                       'VERS item not found in the ~V section.',\
@@ -86,6 +114,8 @@ class LASchecker():
                 self.las.well['NULL'].value = '-9999.25'
                 warns += ["Wrong NULL value. Should be -9999, -999.25 or -9999.25. Replaced to -9999.25"]
             warns+= self.step()
+            warns+=self.stop()
+            warns+=self.start()
         for i in lascheck.spec.MandatorySections().get_missing_mandatory_sections(self.lascheck):
             errors += ["Missing mandatory sections: {}".format(i)]
             return errors, [], None
