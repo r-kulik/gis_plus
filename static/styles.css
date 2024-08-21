@@ -145,7 +145,8 @@ input[list]:focus {
 }
 
 .page-selection-button {
-    padding: 10px 20px;
+    font-size: 1vw;
+    padding: 1vw 2vw;
     margin-left: 10px;
     background-color: #2994E8;
     color: white;
@@ -160,7 +161,8 @@ input[list]:focus {
 }
 
 .page-selection-button-active {
-    padding: 10px 20px;
+    font-size: 1vw;
+    padding: 1vw 2vw;
     margin-left: 10px;
     background-color: #f1f0ea;
     color: black;
@@ -187,7 +189,7 @@ input[list]:focus {
 
 .search-button {
     display: inline-block;
-    padding: 12px 20px;
+    padding: 1vw 2vw;
     margin: 0 1em 1em 0;
     font-size: 1vw;
     text-decoration: none;
@@ -201,7 +203,7 @@ input[list]:focus {
 
 .export-button {
     float: right;
-    padding: 12px 20px;
+    padding: 1vw 2vw;
     font-size: 1vw;
     text-decoration: none;
     color: white;

@@ -1,5 +1,5 @@
 import random 
-from LasEncoder import LasEncoder
+from Las_handler.LasEncoder import LasEncoder
 
 class SuperLas:
     def __init__(self):
