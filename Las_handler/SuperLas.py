@@ -1,5 +1,8 @@
 import hashlib
 import random 
+import re
+from datetime import datetime
+
 try:
     from Las_handler.LasEncoder import LasEncoder
     from Las_handler.Checker import LASchecker
@@ -71,31 +74,49 @@ class SuperLas:
         elif len(result[0]) == 0 and len(result[1]) > 0:
             status = "warn"
         else:
-            status == "ok"
+            status = "ok"
             
             
         
-        # TODO add datetime
+        # TODO replace mnemonics
+        
         if status != "error":
             curves = result[2].curves.keys()
             js = JsonController()
             rus = [curves[0]] + [js.get_rus_origin_mnemonic(i) for i in curves[1::]]    
             eng = [curves[0]] + [js.get_eng_origin_mnemonic(i) for i in curves[1::]]
-        
-        
-            features_sklad = {
-                "start_depth": result[2].well['STRT'].value,
-                "stop_depth": result[2].well['STOP'].value,
-                "version": result[2].version['VERS'].value,
-                "datetime": result[2].well['DATE'].value,
-                "well": result[2].well['WELL'].value,
+            
+            if "Element not found" in rus + eng:
+                status = "error"
+                
+                result[0].append("Unknown mnemonic")
+                
+                features_sklad = {
+                "start_depth": None,
+                "stop_depth": None,
+                "version": None,
+                "datetime": None,
+                "well": None,
                 "company": None,
-                "fieldName" : result[2].well['FLD'].value,
-                "mnemonic_list_rus": rus,
-                "mnemonic_list_eng": eng,
+                "fieldName" : None,
+                "mnemonic_list_rus": None,
+                "mnemonic_list_eng": None,
             }
-            if 'SRVC' in result[2].well.keys() and result[2].well["SRVC"].value != '':
-                features_sklad["company"] = result[2].well["SRVC"].value
+                
+            else:
+                features_sklad = {
+                    "start_depth": result[2].well['STRT'].value,
+                    "stop_depth": result[2].well['STOP'].value,
+                    "version": result[2].version['VERS'].value,
+                    "datetime": self.parse_date(result[2].well['DATE'].value),
+                    "well": result[2].well['WELL'].value,
+                    "company": None,
+                    "fieldName" : result[2].well['FLD'].value,
+                    "mnemonic_list_rus": rus,
+                    "mnemonic_list_eng": eng,
+                }
+                if 'SRVC' in result[2].well.keys() and result[2].well["SRVC"].value != '':
+                    features_sklad["company"] = result[2].well["SRVC"].value
         else:
                         features_sklad = {
                 "start_depth": None,
@@ -129,8 +150,49 @@ class SuperLas:
                 result[2].write(file)
             
         return report
+    
+
+
+    def parse_date(self, date_str):
+        # Define possible date formats and their corresponding regex patterns
+        formats = [
+        (r'(\d{1,2})[/-](\d{1,2})[/-](\d{4})', '%d-%m-%Y'),  # day-month-year
+        (r'(\d{1,2})[/-](\d{1,2})[/-](\d{2})', '%d-%m-%y'),  # day-month-year (2-digit year)
+        (r'(\d{1,2})[/-](\d{1,2})[/-](\d{4})', '%m-%d-%Y'),  # month-day-year
+        (r'(\d{1,2})[/-](\d{1,2})[/-](\d{2})', '%m-%d-%y'),  # month-day-year (2-digit year)
+        (r'(\d{4})[/-](\d{1,2})[/-](\d{1,2})', '%Y-%m-%d'),  # year-month-day
+        (r'(\d{2})[/-](\d{1,2})[/-](\d{1,2})', '%y-%m-%d'),  # year-month-day (2-digit year)
+        (r'(\d{1,2})[.-](\d{1,2})[.-](\d{4})', '%d-%m-%Y'),  # day-month-year with dots
+        (r'(\d{1,2})[.-](\d{1,2})[.-](\d{2})', '%d-%m-%y'),  # day-month-year (2-digit year) with dots
+        (r'(\d{1,2})[.-](\d{1,2})[.-](\d{4})', '%m-%d-%Y'),  # month-day-year with dots
+        (r'(\d{1,2})[.-](\d{1,2})[.-](\d{2})', '%m-%d-%y'),  # month-day-year (2-digit year) with dots
+        (r'(\d{4})[.-](\d{1,2})[.-](\d{1,2})', '%Y-%m-%d'),  # year-month-day with dots
+        (r'(\d{2})[.-](\d{1,2})[.-](\d{1,2})', '%y-%m-%d'),  # year-month-day (2-digit year) with dots
+        (r'(\d{1,2})\.(\d{1,2})\.(\d{4})', '%d-%m-%Y'),  # day-month-year with periods
+        (r'(\d{1,2})\.(\d{1,2})\.(\d{2})', '%d-%m-%y'),  # day-month-year (2-digit year) with periods
+        (r'(\d{1,2})\.(\d{1,2})\.(\d{4})', '%m-%d-%Y'),  # month-day-year with periods
+        (r'(\d{1,2})\.(\d{1,2})\.(\d{2})', '%m-%d-%y'),  # month-day-year (2-digit year) with periods
+        (r'(\d{4})\.(\d{1,2})\.(\d{1,2})', '%Y-%m-%d'),  # year-month-day with periods
+        (r'(\d{2})\.(\d{1,2})\.(\d{1,2})', '%y-%m-%d'),  # year-month-day (2-digit year) with periods
+        (r'(\d{1,2}) (\d{1,2}) (\d{4})', '%d-%m-%Y'),  # day-month-year with spaces
+        (r'(\d{1,2}) (\d{1,2}) (\d{2})', '%d-%m-%y'),  # day-month-year (2-digit year) with spaces
+        (r'(\d{1,2}) (\d{1,2}) (\d{4})', '%m-%d-%Y'),  # month-day-year with spaces
+        (r'(\d{1,2}) (\d{1,2}) (\d{2})', '%m-%d-%y'),  # month-day-year (2-digit year) with spaces
+        (r'(\d{4}) (\d{1,2}) (\d{1,2})', '%Y-%m-%d'),  # year-month-day with spaces
+        (r'(\d{2}) (\d{1,2}) (\d{1,2})', '%y-%m-%d'),  # year-month-day (2-digit year) with spaces
+    ]
+
+        for pattern, date_format in formats:
+            match = re.match(pattern, date_str)
+            if match:
+                day, month, year = match.groups()
+                try:
+                    return datetime.strptime(f'{day}-{month}-{year}', date_format)
+                except ValueError:
+                    return None
+
+
         
 if __name__ == "__main__":
     c = SuperLas()
-    print(c.process_file1("903.las"))
-    
+    print(c.process_file1("10_IK.las"))
