@@ -18,3 +18,4 @@ class SuperLas:
                         "file_path": "Encoded/1.las",
                         
                     }}
+                

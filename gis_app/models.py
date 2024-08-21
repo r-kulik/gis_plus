@@ -25,7 +25,7 @@ class Files(models.Model):
     fileVersion = models.CharField(max_length=5)
     startDepth = models.FloatField()
     stopDepth = models.FloatField()
-    datetime = models.DateTimeField()
+    datetime = models.DateTimeField(null=True, blank=True)
     company = models.ForeignKey(to=Companies, on_delete=models.CASCADE)
     well = models.ForeignKey(to=Wells, on_delete=models.CASCADE)
     metrics = models.ManyToManyField(CurveMetrics)

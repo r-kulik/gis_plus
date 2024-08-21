@@ -9,6 +9,9 @@ from .models import Companies, Fields, Wells, CurveMetrics, Files
 from django.db.models import Q, Count
 import random
 import string
+from Las_handler.SuperLas import SuperLas
+from django.forms.models import model_to_dict
+
 
 def hello_world(request):
     fake = Faker("ru_RU")
@@ -183,8 +186,29 @@ def exportFiles(request: HttpRequest) -> HttpResponse:
     return JsonResponse({'files': file_list})
 
 
-        
+def get_or_create_company(company_name):
+    return Companies.objects.get_or_create(companyName=company_name)
 
+# Function to get or create a Field
+def get_or_create_field(field_name):
+    return Fields.objects.get_or_create(fieldName=field_name)
+
+# Function to get or create a Well
+def get_or_create_well(well_number, field_name):
+    field, _ = get_or_create_field(field_name)
+    return Wells.objects.get_or_create(wellNumber=well_number, defaults={'field': field})
+
+# Function to get or create a CurveMetric
+def get_or_create_metric(metric_name):
+    return CurveMetrics.objects.get_or_create(metricName=metric_name)
+       
+def file_entry_to_dict(file_entry):
+    file_dict = model_to_dict(file_entry)
+    file_dict['company'] = model_to_dict(file_entry.company)
+    file_dict['well'] = model_to_dict(file_entry.well)
+    file_dict['well']['field'] = model_to_dict(file_entry.well.field)
+    file_dict['metrics'] = [model_to_dict(metric) for metric in file_entry.metrics.all()]
+    return file_dict
 
     
 
@@ -205,18 +229,56 @@ def upload_file(request):
                 for chunk in file.chunks():
                     destination.write(chunk)
             # вот здесь у нас магия проверки ласов
+            processer = SuperLas()
+            process_result = processer.process_file(internalStoragePath)
 
-            
-            status = ""
-            # 
-            file_data.append({
-                'name': file.name,
-                'size': file.size,
-                'type': file.content_type,
-                'path': file_path,
-                'internalStoragePath': internalStoragePath,
-                "status": "", # status: OK, WARN, FAIL,
-                "commentary": ""   # some commentary about the exception or changes
-            })
+            processed_file_path = None
+            if process_result.get('status', 'error') in ['warn', 'ok']:
+                features = process_result.get('features', {})
+                company_name = features.get('company', None)
+                well_number = features.get('well', None)
+                metrics_list = features.get('mnemonic_list_rus', []) + features.get('mnemonic_list_eng', [])
+                processed_file_path = features.get('file_path', None)
+                file_version = features.get('version', None)
+                start_depth = features.get('start_depth', None)
+                stop_depth = features.get('stop_depth', None)
+                datetime_value = features.get('datetime')
+
+                company, _ = get_or_create_company(company_name)
+                well, _ = get_or_create_well(well_number, field_name=company_name)  # Assuming field name is the same as company name for simplicity
+                metrics = [get_or_create_metric(metric_name)[0] for metric_name in metrics_list]
+                
+                file_entry = Files(
+                    filePath=file.name,
+                    fileVersion=file_version,
+                    startDepth=start_depth,
+                    stopDepth=stop_depth,
+                    datetime=datetime_value,
+                    company=company,
+                    well=well,
+                    internalStoragePath=processed_file_path 
+                )
+
+                file_entry.save()
+                # Add the many-to-many relationship
+                file_entry.metrics.set(metrics)
+                file_data.append({
+                    "status": process_result.get('status', 'error'),
+                    'name': file.name,
+                    'size': file.size,
+                    'originalFilePath': internalStoragePath,
+                    'processedFilePath': processed_file_path,
+                    'description': process_result.get('description', 'No description'),
+                    'database_entry': file_entry_to_dict(file_entry)
+                })
+            else:
+                file_data.append({
+                    "status": process_result.get('status', 'error'),
+                    'name': file.name,
+                    'size': file.size,
+                    'originalFilePath': internalStoragePath,
+                    'processedFilePath': processed_file_path,
+                    'description': process_result.get('description', 'No description')
+                })
         return JsonResponse({'files': file_data})
     return JsonResponse({'error': 'No files uploaded'}, status=400)

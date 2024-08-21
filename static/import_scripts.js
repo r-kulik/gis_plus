@@ -8,18 +8,18 @@ function loadAndProcessFiles(data) {
 
 $(document).ready(function() {
     $('#uploadButton').click(function() {
-        var formData = new FormData();
+        
         $.each($('#fileInput')[0].files, function(i, file) {
+            var formData = new FormData();
             formData.append('files', file);
-        });
-
-        $.ajax({
-            url: '/upload/',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: (data) => { loadAndProcessFiles(data);}
+            $.ajax({
+                url: '/upload/',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: (data) => { loadAndProcessFiles(data);}
+            });
         });
     });
 });

@@ -10,6 +10,26 @@
 </head>
 <body>
 
+    <script type="text/x-jquery-tmpl" id="fileRowTemplate">
+        <tr class="trtrtr">
+            <td>
+                <div class="checkbox-wrapper">
+                    <input type="checkbox"/>
+                </div>
+            </td>
+            <td>${fileId}</td>
+            <td>${filePath}</td>
+            <td>${fileVersion}</td>
+            <td>${startDepth}</td>
+            <td>${stopDepth}</td>
+            <td>${datetime}</td>
+            <td>${companyName}</td>
+            <td>${wellNumber}</td>
+            <td>${fieldName}</td>
+            <td>${metrics}</td>
+        </tr>
+    </script>
+
     <header>
         <nav class="header-container">
             <img src="https://cdn.freebiesupply.com/logos/large/2x/gazprom-6-logo-black-and-white.png" alt="Gazprom-logo" class="gazprom-logo">
