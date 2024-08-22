@@ -1,6 +1,6 @@
 function getFileText(fileId, fileName) {
     return new Promise((resolve, reject) => {
-        let url = '/get_file_text/';
+        let url = '/get_file_text';
         if (fileId) {
             url += `?file_id=${fileId}`;
         } else if (fileName) {
@@ -33,7 +33,7 @@ function getFileText(fileId, fileName) {
 
 function getImageUrl(fileId, fileName) {
     return new Promise((resolve, reject) => {
-        let url = '/get_image_url/';
+        let url = '/get_image_url';
         if (fileId) {
             url += `?file_id=${fileId}`;
         } else if (fileName) {

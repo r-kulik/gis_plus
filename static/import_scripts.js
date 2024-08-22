@@ -144,6 +144,50 @@ function saveFilesToDatabase() {
     var totalFiles = 0;
 }
 
+function makeImageDragable(){
+    let image = document.getElementById('zoomable-image');
+    let isDragging = false;
+    let startX, startY;
+    let translateX = 0, translateY = 0;
+    let scale = 1;
+    const minScale = 0.5; // Minimum scale factor
+    const maxScale = 3;  // Maximum scale factor (you can adjust this as needed)
+  
+    // Zoom functionality
+    image.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = 1.1;
+      if (e.deltaY < 0) {
+        // Zoom in
+        scale = Math.min(scale * zoomFactor, maxScale);
+      } else {
+        // Zoom out
+        scale = Math.max(scale / zoomFactor, minScale);
+      }
+      image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    });
+  
+    // Drag functionality
+    image.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+      image.classList.add('grabbing');
+    });
+  
+    image.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    });
+  
+    image.addEventListener('mouseup', () => {
+      isDragging = false;
+      image.classList.remove('grabbing');
+    });
+}
+
 $(document).ready(function() {
     $('#uploadToolbar').hide(); 
     $('#fileInput').on('change', function() {
@@ -158,5 +202,39 @@ $(document).ready(function() {
 
     $('#saveButton').click(function() {
         saveFilesToDatabase();
+    });
+
+    $('#fileTable tbody').on('click', 'tr', function(event) {
+        if ($(event.target).closest('td').hasClass('ignore-click')) {
+            return; // Ignore the click event
+        }
+        const fileId = null;
+        const fileName = $(this).data('fileName');
+        console.log('Clicked row file ID:', fileId);
+        console.log('Clicked row file Name:', fileName);
+    
+        Promise.all([
+            getFileText(fileId, fileName),
+            getImageUrl(fileId, fileName)
+        ]).then(([fileText, imageUrl]) => {
+            const templateData = {
+                fileText: fileText,
+                imageUrl: "../" + imageUrl
+            };
+            console.log(templateData.imageUrl);
+            $('#fileContentTemplate').tmpl(templateData).appendTo('#windowContent');
+            $('#windowOverlay').show();
+            makeImageDragable();
+        }).catch(error => {
+            console.error('Error fetching file content or image:', error);
+        });
+    }); 
+
+    $('#windowOverlay').on('click', function(event) {
+        var windows = document.querySelectorAll('div.' + "window-container");
+        if (windows.length > 0) { 
+            $(this).hide();
+            $('#windowContent').empty();
+        }
     });
 });

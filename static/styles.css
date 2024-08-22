@@ -214,6 +214,7 @@ input[type=checkbox] {
 }
 
 .export-button {
+    margin: 0 1vw;
     float: right;
     padding: 1vw 2vw;
     font-size: 1vw;
