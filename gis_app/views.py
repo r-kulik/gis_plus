@@ -370,34 +370,43 @@ def create_curve_image_by_file_name(file_name):
 
 @csrf_exempt
 def get_image_url(request):
-    if request.method == 'POST':
-        file_name = request.POST.get('file_name')
-        if not file_name:
-            return JsonResponse({'error': 'File name is required'}, status=400)
+    if request.method == 'GET':
+        file_id = request.GET.get('file_id')
+        file_name = request.GET.get('file_name')
 
-        # Generate the image
-        img_io = create_curve_image_by_file_name(file_name)
+        if not file_id and not file_name:
+            return JsonResponse({'error': 'File ID or File Name is required'}, status=400)
 
-        # Save the image to a temporary location
-        media_root = os.path.join(settings.MEDIA_ROOT, 'temp_images')
-        if not os.path.exists(media_root):
-            os.makedirs(media_root)
+        try:
+            if file_id:
+                file_obj = Files.objects.get(fileId=file_id)
+            else:
+                file_obj = Files.objects.get(internalStoragePath=file_name)
 
-        image_path = os.path.join(media_root, f'{file_name}.jpg')
-        with open(image_path, 'wb') as f:
-            f.write(img_io.getvalue())
+            internal_storage_path = file_obj.internalStoragePath
+            img_io = create_curve_image_by_file_name(internal_storage_path)
+            media_root = os.path.join('media', 'temp_images')
+            image_name = f'{internal_storage_path}.jpg'
+            image_path = os.path.join(media_root, image_name)
 
-        # Construct the URL of the saved image
-        image_url = f'/media/temp_images/{file_name}.jpg'
+            print(f"image_path={image_path}")
+            with open(image_path, 'wb') as f:
+                f.write(img_io.getvalue())
 
-        return JsonResponse({'image_url': image_url})
+            # Construct the URL of the saved image
+            image_url = f'media/temp_images/{image_name}'
+            print(image_url)
+            return JsonResponse({'image_url': image_url})
+        except Files.DoesNotExist:
+            return JsonResponse({'error': 'File not found'}, status=404)
+
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
 @csrf_exempt
 def get_internal_storage_path(request):
-    if request.method == 'POST':
-        file_id = request.POST.get('file_id')
+    if request.method == 'GET':
+        file_id = request.GET.get('file_id')
         if not file_id:
             return JsonResponse({'error': 'File ID is required'}, status=400)
 
@@ -411,26 +420,36 @@ def get_internal_storage_path(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 @csrf_exempt
-def get_file_text_by_name(request):
-    if request.method == 'POST':
-        file_name = request.POST.get('file_name')
-        if not file_name:
-            return JsonResponse({'error': 'File name is required'}, status=400)
+def get_file_text(request):
+    if request.method == 'GET':
+        file_id = request.GET.get('file_id')
+        file_name = request.GET.get('file_name')
 
-        file_path = os.path.join('temp_files', file_name.strip())
-        if os.path.exists(file_path):
-            with open(file_path, 'r', encoding='utf-8') as f:
-                file_text = f.read()
-            return JsonResponse({'file_text': file_text})
-        else:
+        if not file_id and not file_name:
+            return JsonResponse({'error': 'File ID or File Name is required'}, status=400)
+
+        try:
+            if file_id:
+                file_obj = Files.objects.get(fileId=file_id)
+            else:
+                file_obj = Files.objects.get(internalStoragePath=file_name)
+
+            file_path = os.path.join('temp_files', file_obj.internalStoragePath.strip())
+            if os.path.exists(file_path):
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    file_text = f.read()
+                return JsonResponse({'file_text': file_text})
+            else:
+                return JsonResponse({'error': 'File not found'}, status=404)
+        except Files.DoesNotExist:
             return JsonResponse({'error': 'File not found'}, status=404)
-
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
 
 @csrf_exempt
 def get_file_text_by_id(request):
-    if request.method == 'POST':
-        file_id = request.POST.get('file_id')
+    if request.method == 'GET':
+        file_id = request.GET.get('file_id')
         if not file_id:
             return JsonResponse({'error': 'File ID is required'}, status=400)
 
@@ -447,5 +466,3 @@ def get_file_text_by_id(request):
             return JsonResponse({'error': 'File not found'}, status=404)
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
-
-
