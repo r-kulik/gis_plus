@@ -21,49 +21,6 @@ import io
 
 
 def hello_world(request):
-    fake = Faker("ru_RU")
-
-    def create_dummy_companies(num_companies=10):
-        for _ in range(num_companies):
-            Companies.objects.create(companyName=fake.company())
-
-    def create_dummy_fields(num_fields=5):
-        for _ in range(num_fields):
-            Fields.objects.create(fieldName=fake.city())
-
-    def create_dummy_wells(num_wells=20):
-        fields = Fields.objects.all()
-        for _ in range(num_wells):
-            Wells.objects.create(wellNumber=fake.numerify(text='WELL-####'), field=random.choice(fields))
-
-    def create_dummy_curve_metrics(num_metrics=10):
-        for _ in range(num_metrics):
-            CurveMetrics.objects.create(metricName=fake.job())
-
-    def create_dummy_files(num_files=30):
-        companies = Companies.objects.all()
-        wells = Wells.objects.all()
-        metrics = CurveMetrics.objects.all()
-        for _ in range(num_files):
-            file = Files.objects.create(
-                filePath=fake.file_path(depth=3, category='text'),
-                fileVersion=fake.numerify(text='v%#.##'),
-                startDepth=random.uniform(100, 1000),
-                stopDepth=random.uniform(1000, 5000),
-                datetime=fake.date_time_this_decade(before_now=True, after_now=False, tzinfo=timezone.get_current_timezone()),
-                company=random.choice(companies),
-                well=random.choice(wells),
-                internalStoragePath = fake.file_path(depth=3, category='text')
-            )
-            file.metrics.set(random.sample(list(metrics), random.randint(1, 5)))
-
-    def populate_database():
-        create_dummy_companies()
-        create_dummy_fields()
-        create_dummy_wells()
-        create_dummy_curve_metrics()
-        create_dummy_files()
-    populate_database()
     return HttpResponse("Hello, World!")
 
 
@@ -375,11 +332,40 @@ def create_curve_image_by_file_name(file_name):
     img_io.seek(0)
     return img_io
 
+
+@csrf_exempt
+def get_file_text(request):
+    if request.method == 'POST':
+        data = request.POST
+        file_id = data.get('file_id')
+        file_name = data.get('file_name')
+
+        if not file_id and not file_name:
+            return JsonResponse({'error': 'File ID or File Name is required'}, status=400)
+
+        try:
+            if file_id:
+                file_obj = Files.objects.get(fileId=file_id)
+            else:
+                file_obj = Files.objects.get(internalStoragePath=file_name)
+
+            file_path = os.path.join('temp_files', file_obj.internalStoragePath.strip())
+            if os.path.exists(file_path):
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    file_text = f.read()
+                return JsonResponse({'file_text': file_text})
+            else:
+                return JsonResponse({'error': 'File not found'}, status=404)
+        except Files.DoesNotExist:
+            return JsonResponse({'error': 'File not found'}, status=404)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
 @csrf_exempt
 def get_image_url(request):
-    if request.method == 'GET':
-        file_id = request.GET.get('file_id')
-        file_name = request.GET.get('file_name')
+    if request.method == 'POST':
+        data = request.POST
+        file_id = data.get('file_id')
+        file_name = data.get('file_name')
 
         if not file_id and not file_name:
             return JsonResponse({'error': 'File ID or File Name is required'}, status=400)
@@ -429,50 +415,3 @@ def get_internal_storage_path(request):
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-@csrf_exempt
-def get_file_text(request):
-    if request.method == 'GET':
-        file_id = request.GET.get('file_id')
-        file_name = request.GET.get('file_name')
-
-        if not file_id and not file_name:
-            return JsonResponse({'error': 'File ID or File Name is required'}, status=400)
-
-        try:
-            if file_id:
-                file_obj = Files.objects.get(fileId=file_id)
-            else:
-                file_obj = Files.objects.get(internalStoragePath=file_name)
-
-            file_path = os.path.join('temp_files', file_obj.internalStoragePath.strip())
-            if os.path.exists(file_path):
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    file_text = f.read()
-                return JsonResponse({'file_text': file_text})
-            else:
-                return JsonResponse({'error': 'File not found'}, status=404)
-        except Files.DoesNotExist:
-            return JsonResponse({'error': 'File not found'}, status=404)
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-
-@csrf_exempt
-def get_file_text_by_id(request):
-    if request.method == 'GET':
-        file_id = request.GET.get('file_id')
-        if not file_id:
-            return JsonResponse({'error': 'File ID is required'}, status=400)
-
-        try:
-            file_obj = Files.objects.get(fileId=file_id)
-            file_path = os.path.join('temp_files', file_obj.internalStoragePath.strip())
-            if os.path.exists(file_path):
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    file_text = f.read()
-                return JsonResponse({'file_text': file_text})
-            else:
-                return JsonResponse({'error': 'File not found'}, status=404)
-        except Files.DoesNotExist:
-            return JsonResponse({'error': 'File not found'}, status=404)
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)

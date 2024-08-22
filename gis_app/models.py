@@ -1,4 +1,7 @@
+import hashlib
 from django.db import models
+import os
+
 
 class Companies(models.Model):
     companyId = models.AutoField(primary_key=True)
