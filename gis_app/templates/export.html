@@ -14,12 +14,12 @@
 
     <script type="text/x-jquery-tmpl" id="fileRowTemplate">
         <tr data-file-id="${fileId}" data-file-name="${internalStoragePath}">
-            <td>
+            <td class="ignore-click">
                 <div class="checkbox-wrapper">
                     <input type="checkbox"/>
                 </div>
             </td>
-            <td>${fileId}</td>
+            <td class="cr">${fileId}</td>
             <td>${filePath}</td>
             <td>${fileVersion}</td>
             <td>${startDepth}</td>
@@ -52,8 +52,8 @@
             <a href="/export/">
                 <button class="search-button" id="clearButton">Очистить</button>
             </a>
-            <button class="export-button" id="exportButton">Экспортировать</button>
             <button class="export-button" id="exportEnglishButton">Export in English</button>
+            <button class="export-button" id="exportButton">Экспортировать</button>
             
             <table>
                 <tr>
@@ -142,5 +142,6 @@
     <div class="window-overlay" id="windowOverlay">
         <div id="windowContent"></div>
     </div>
+    
 </body>
 </html>

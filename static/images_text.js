@@ -1,19 +1,18 @@
 function getFileText(fileId, fileName) {
     return new Promise((resolve, reject) => {
-        let url = '/get_file_text/';
-        if (fileId) {
-            url += `?file_id=${fileId}`;
-        } else if (fileName) {
-            url += `?file_name=${fileName}`;
-        } else {
+        let url = new URL('/get_file_text', window.location.origin);
+        
+        if (!fileId && !fileName) {
             reject(new Error('File ID or File Name is required'));
             return;
         }
 
         console.log('Sending AJAX request to get file text:', { file_id: fileId, file_name: fileName });
         $.ajax({
-            url: url,
-            type: 'GET',
+            url: url.toString(),
+            type: 'POST',
+            data: JSON.stringify({ file_id: fileId, file_name: fileName }),
+            contentType: 'application/json',
             success: function(data) {
                 console.log('AJAX request successful:', data);
                 if (data.file_text) {
@@ -30,23 +29,21 @@ function getFileText(fileId, fileName) {
     });
 }
 
-
 function getImageUrl(fileId, fileName) {
     return new Promise((resolve, reject) => {
-        let url = '/get_image_url/';
-        if (fileId) {
-            url += `?file_id=${fileId}`;
-        } else if (fileName) {
-            url += `?file_name=${fileName}`;
-        } else {
+        let url = new URL('/get_image_url', window.location.origin);
+        
+        if (!fileId && !fileName) {
             reject(new Error('File ID or File Name is required'));
             return;
         }
 
         console.log('Sending AJAX request to get image URL:', { file_id: fileId, file_name: fileName });
         $.ajax({
-            url: url,
-            type: 'GET',
+            url: url.toString(),
+            type: 'POST',
+            data: JSON.stringify({ file_id: fileId, file_name: fileName }),
+            contentType: 'application/json',
             success: function(data) {
                 console.log('AJAX request successful:', data);
                 if (data.image_url) {
@@ -62,4 +59,3 @@ function getImageUrl(fileId, fileName) {
         });
     });
 }
-
