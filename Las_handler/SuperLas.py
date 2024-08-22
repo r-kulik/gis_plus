@@ -205,19 +205,38 @@ class SuperLas:
             
             return img
         except:
-            p = "exphoto.jpg"
+            p = "file1.jpg"
             with open(p, "rb") as f:
                 img = io.BytesIO(f.read())
             return img
+    
+    def translate(self, file):
+        file_name = f"temp_files/{file}"
+        new_name = f"{hashlib.md5(file.encode("utf-8")).hexdigest()}.las"
+        las = lasio.read(file_name)
+        names = las.curves.keys()
+        js = JsonController()
+
+        eng = [names[0]] + [js.get_eng_origin_mnemonic(i) for i in names[1::]]
+        
+        for i in range(len(eng)):
+            las.curves[i].mnemonic=eng[i]
+        with open(f"temp_files/{new_name}", "w" ,encoding="utf-8") as file:    
+            las.write(file)
+        
+        return new_name
+
+
 
 
         
 if __name__ == "__main__":
     c = SuperLas()
+    print(c.translate("10_IK.las"))
     #c.get_image("42.las")
     """c = SuperLas()
         print(c.process_file1("15_2.las"))"""
-    import os
+    """import os
     relative_path = os.path.join('temp_files')
 
     absolute_path = os.path.abspath(relative_path)
@@ -226,4 +245,4 @@ if __name__ == "__main__":
     # Iterate through the files in the directory
     for filename in os.listdir(absolute_path):
         print(filename)
-        print(c.process_file1(filename))
+        print(c.process_file1(filename))"""
