@@ -39,8 +39,8 @@
     </script>
 
     <script type="text/x-jquery-tmpl" id="fileContentTemplate">
-        <div class="window-container">
-            <div class="scrollable-window">
+        <div id="window-container-${fileName}" class="window-container">
+            <div class="scrollable-window" id='text_with_errors'>
                 <pre>${fileText}</pre>
             </div>
             <div class="las-file-graphs">
@@ -51,6 +51,7 @@
 
     <script type="text/x-jquery-tmpl" id="warningsTemplates">
         <div class="warnings-window-container">
+            <b> WARNING! </b>
             <pre>${warningsMessage}</pre>
         </div>
     </script>

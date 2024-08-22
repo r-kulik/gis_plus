@@ -1,6 +1,9 @@
 var totalFiles = 0;
 var processedFiles = 0;
 
+
+nameToWarningMap = {};
+
 function updateProgressBar() {
     var percentage = (processedFiles / totalFiles) * 100;
     $('#progressBar').css('width', percentage + '%');
@@ -62,6 +65,8 @@ function loadAndProcessFiles(data) {
             $row.find('input[type="checkbox"]').prop('checked', true);
         }
 
+        nameToWarningMap[file.originalFilePath] = file.errors;
+        console.log(nameToWarningMap);
         processedFiles++;
         updateProgressBar();
     });
@@ -212,7 +217,7 @@ $(document).ready(function() {
         const fileName = $(this).data('fileName');
         console.log('Clicked row file ID:', fileId);
         console.log('Clicked row file Name:', fileName);
-
+    
         console.log(fileId);
         console.log(fileName);
     
@@ -224,14 +229,46 @@ $(document).ready(function() {
                 fileText: fileText,
                 imageUrl: "../" + imageUrl
             };
+    
+            // Create a unique ID for the window container using fileName
+            const windowContainerId = `window-container-`+fileName;
+    
+            // Clear the existing content of the unique window container
+            $(`#windowContainerId`).empty();
+    
+            // Log the image URL and append the file content template
             console.log(templateData.imageUrl);
-            $('#fileContentTemplate').tmpl(templateData).appendTo('#windowContent');
+            $('#fileContentTemplate').tmpl(templateData).appendTo(`#windowContent`);
+    
+            // Show the window overlay
             $('#windowOverlay').show();
+    
+            // Iterate over the error objects and append the corresponding templates
+            if (nameToWarningMap[fileName]) {
+                nameToWarningMap[fileName].forEach(errorObject => {
+                    const container = document.getElementById('text_with_errors');
+                    if (container) {
+                        console.log("ASDFSDKFHSDKJfHKSDJfh");
+                        let paragraph = document.createElement('p');
+                        if (errorObject.status === 'error') {
+                            paragraph.textContent = 'Error! ' + errorObject.description;
+                        } else if (errorObject.status === 'warn') {
+                            paragraph.textContent = 'Warning! ' + errorObject.description;
+                        }
+                        if (container.firstChild) {
+                            container.insertBefore(paragraph, container.firstChild);
+                        } else {
+                            container.appendChild(paragraph);
+                        }
+                    }
+                });
+            }
+    
             makeImageDragable();
         }).catch(error => {
             console.error('Error fetching file content or image:', error);
         });
-    }); 
+    });
 
     $('#windowOverlay').on('click', function(event) {
         var windows = document.querySelectorAll('div.' + "window-container");
