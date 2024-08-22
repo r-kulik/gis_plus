@@ -25,3 +25,5 @@ class JsonController:
     
     def get_rus_origin_mnemonic(self, mnemonic: str) -> str:
         return self.rus.get(mnemonic, "Element not found")
+    
+    
