@@ -1,5 +1,6 @@
 from datetime import datetime
 import hashlib
+import traceback
 import zipfile
 from django.conf import settings
 from django.shortcuts import render # type: ignore
@@ -344,20 +345,26 @@ def get_file_text(request):
             return JsonResponse({'error': 'File ID or File Name is required'}, status=400)
 
         try:
-            if file_id:
-                file_obj = Files.objects.get(fileId=file_id)
-            else:
-                file_obj = Files.objects.get(internalStoragePath=file_name)
+            # print(type(file_id))
 
-            file_path = os.path.join('temp_files', file_obj.internalStoragePath.strip())
+            if int(file_id) != -1:
+                file_obj = Files.objects.get(fileId=file_id)
+                file_name = file_obj.internalStoragePath
+            file_path = os.path.join('temp_files', file_name)
+            # print(file_path)
             if os.path.exists(file_path):
                 with open(file_path, 'r', encoding='utf-8') as f:
                     file_text = f.read()
                 return JsonResponse({'file_text': file_text})
             else:
-                return JsonResponse({'error': 'File not found'}, status=404)
+                print("Not Found")
+                print(file_path)
+                return JsonResponse({'error': 'File not found1'}, status=404)
         except Files.DoesNotExist:
-            return JsonResponse({'error': 'File not found'}, status=404)
+
+            print("Does not exist")
+            print(traceback.format_exc())
+            return JsonResponse({'error': 'File not found2'}, status=404)
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 @csrf_exempt
@@ -371,18 +378,17 @@ def get_image_url(request):
             return JsonResponse({'error': 'File ID or File Name is required'}, status=400)
 
         try:
-            if file_id:
+            if int(file_id) != -1:
                 file_obj = Files.objects.get(fileId=file_id)
-            else:
-                file_obj = Files.objects.get(internalStoragePath=file_name)
+                internal_storage_path = file_obj.internalStoragePath
+            internal_storage_path = file_name
 
-            internal_storage_path = file_obj.internalStoragePath
             print(f"internal_storage_path={internal_storage_path}")
 
             processer = SuperLas()
             img_io = processer.get_image(internal_storage_path)
             media_root = os.path.join('media', 'temp_images')
-            image_name = f'{internal_storage_path}.jpg'
+            image_name = f'{internal_storage_path}.jpg'.strip()
             image_path = os.path.join(media_root, image_name)
 
             print(f"image_path={image_path}")
@@ -415,3 +421,5 @@ def get_internal_storage_path(request):
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+def debug_view(request):
+    return HttpResponse("Debug View")

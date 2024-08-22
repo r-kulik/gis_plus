@@ -4,12 +4,13 @@ import re
 from datetime import datetime
 import traceback
 # import matplotlib.pyplot as plt
+from django.conf import settings
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import pandas as pd
 import lasio
 import io
-
+import os
 
 try:
     from Las_handler.LasEncoder import LasEncoder
@@ -165,7 +166,8 @@ class SuperLas:
     def get_image(self, file_name):
         try:
             file_name = file_name.strip()
-            las_file_path = f"temp_files/{file_name}"
+            las_file_path = os.path.join(settings.BASE_DIR, "temp_files", file_name)
+            print(f"las_file_path={las_file_path}")
             las = lasio.read(las_file_path)
 
             cur = las.curves
@@ -185,6 +187,7 @@ class SuperLas:
             data_points = len(x)
             height_per_data_point = 0.5
             height = int(data_points * height_per_data_point)
+            width = num * 400
 
             # Create subplots
             fig = make_subplots(rows=1, cols=num, shared_yaxes=True)
@@ -198,13 +201,13 @@ class SuperLas:
                 legend_title_text='Curves',
                 title='LAS File Plot',
                 height=height,  # Set height based on the calculated value
-                width=num * 400  # Adjust width to match the original figsize
+                width=width # Adjust width to match the original figsize
             )
 
             for i in range(num):
                 fig.update_xaxes(title_text=y_labels[i], row=1, col=i+1)
 
-            img_bytes = fig.to_image(format="png", width=num * 400, height=height)
+            img_bytes = fig.to_image(format="png", width=width, height=height)
             img = io.BytesIO(img_bytes)
             img.seek(0)
 

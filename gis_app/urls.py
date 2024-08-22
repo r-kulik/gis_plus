@@ -13,4 +13,5 @@ urlpatterns = [
     path('downloadFiles/', views.downloadFiles, name='Download Files'),
     path('get_file_text/', views.get_file_text, name='get_file_text'),
     path('get_image_url/', views.get_image_url, name='get_image_url'),
+    path('debug/', views.debug_view, name='debug'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

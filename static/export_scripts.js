@@ -208,7 +208,9 @@ $(document).ready(
             const fileName = $(this).data('fileName');
             console.log('Clicked row file ID:', fileId);
             console.log('Clicked row file Name:', fileName);
-        
+
+            console.log(typeof fileId);
+            console.log(fileName);
             Promise.all([
                 getFileText(fileId, fileName),
                 getImageUrl(fileId, fileName)

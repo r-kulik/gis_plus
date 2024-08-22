@@ -208,10 +208,13 @@ $(document).ready(function() {
         if ($(event.target).closest('td').hasClass('ignore-click')) {
             return; // Ignore the click event
         }
-        const fileId = null;
+        const fileId = -1;
         const fileName = $(this).data('fileName');
         console.log('Clicked row file ID:', fileId);
         console.log('Clicked row file Name:', fileName);
+
+        console.log(fileId);
+        console.log(fileName);
     
         Promise.all([
             getFileText(fileId, fileName),
