@@ -200,7 +200,10 @@ $(document).ready(
         //     }
         // });
 
-        $('#fileTable tbody').on('click', 'tr', function() {
+        $('#fileTable tbody').on('click', 'tr', function(event) {
+            if ($(event.target).closest('td').hasClass('ignore-click')) {
+                return; // Ignore the click event
+            }
             const fileId = $(this).data('fileId');
             const fileName = $(this).data('fileName');
             console.log('Clicked row file ID:', fileId);
@@ -224,7 +227,8 @@ $(document).ready(
         }); 
 
         $('#windowOverlay').on('click', function(event) {
-            if (event.target === this) {
+            var windows = document.querySelectorAll('div.' + "window-container");
+            if (windows.length > 0) { 
                 $(this).hide();
                 $('#windowContent').empty();
             }
