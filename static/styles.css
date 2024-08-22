@@ -74,8 +74,8 @@ input[type=checkbox] {
 }
 
 .zoomable-image {
-    width: auto;
-    height: inherit;
+    width: inherit;
+    height: auto;
     transition: transform 0.25s ease;
     cursor: grab;
 }

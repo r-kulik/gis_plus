@@ -3,7 +3,9 @@ import random
 import re
 from datetime import datetime
 import traceback
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 import pandas as pd
 import lasio
 import io
@@ -163,11 +165,9 @@ class SuperLas:
     def get_image(self, file_name):
         try:
             file_name = file_name.strip()
-            # Step 1: Read the LAS file
             las_file_path = f"temp_files/{file_name}"
             las = lasio.read(las_file_path)
 
-            # Step 2: Extract log data into a pandas DataFrame
             cur = las.curves
             labels = []
             for i in range(len(cur)):
@@ -181,30 +181,33 @@ class SuperLas:
             curve_names = list(df.columns)
             num = len(y_labels)
 
-            fig, axs = plt.subplots(1, num, figsize=(num * 4, 12), sharey=True)
-            cmap = plt.get_cmap('tab10')  # You can choose any colormap you prefer
+            # Calculate height based on the number of data points and scaling factor
+            data_points = len(x)
+            height_per_data_point = 0.5
+            height = int(data_points * height_per_data_point)
 
-            if num != 1:
-                for i in range(len(y_labels)):
-                    axs[i].plot(df[curve_names[i]], x, color=cmap(i % 10))  # Note the swap of x and df[curve_names[i+1]]
-                    axs[i].set_xlabel(y_labels[i])
-                    axs[i].set_ylabel(x_label)
-                    axs[i].grid(True)  # Add grid to each subplot
-            else:
-                for i in range(len(y_labels)):
-                    axs.plot(df[curve_names[i]], x, color=cmap(i % 10))  # Note the swap of x and df[curve_names[i+1]]
-                    axs.set_xlabel(y_labels[i])
-                    axs.set_ylabel(x_label)
-                    axs.grid(True)  # Add grid to the single subplot
+            # Create subplots
+            fig = make_subplots(rows=1, cols=num, shared_yaxes=True)
 
-            plt.gca().invert_yaxis()  # Invert the y-axis to show depth from top to bottom
-            plt.tight_layout()
-            img = io.BytesIO()
-            plt.savefig(img, format='png')
-            img.seek(0)  # Reset the stream position to the beginning
+            for i in range(len(y_labels)):
+                fig.add_trace(go.Scatter(x=df[curve_names[i]], y=x, mode='lines', name=y_labels[i]), row=1, col=i+1)
 
-            plt.close(fig)
-            
+            # Update layout
+            fig.update_layout(
+                yaxis=dict(title=x_label, autorange="reversed"),
+                legend_title_text='Curves',
+                title='LAS File Plot',
+                height=height,  # Set height based on the calculated value
+                width=num * 400  # Adjust width to match the original figsize
+            )
+
+            for i in range(num):
+                fig.update_xaxes(title_text=y_labels[i], row=1, col=i+1)
+
+            img_bytes = fig.to_image(format="png", width=num * 400, height=height)
+            img = io.BytesIO(img_bytes)
+            img.seek(0)
+
             return img
         except Exception as e:
             print(traceback.format_exc())
@@ -212,9 +215,10 @@ class SuperLas:
             with open(p, "rb") as f:
                 img = io.BytesIO(f.read())
             return img
+
     
     def translate(self, file):
-        file_name = f"temp_files/{file}"
+        file_name = file
         # print(hashlib.md5(file.encode("utf-8")).hexdigest())
         new_name = f"{hashlib.md5(file.encode('utf-8')).hexdigest()}.las"
         las = lasio.read(file_name)

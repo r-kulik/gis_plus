@@ -133,8 +133,7 @@ function exportSelectedFilesInEnglish() {
     });
 }
 
-
-function makeImageDragable(){
+function makeImageDragable() {
     let image = document.getElementById('zoomable-image');
     let isDragging = false;
     let startX, startY;
@@ -142,42 +141,49 @@ function makeImageDragable(){
     let scale = 1;
     const minScale = 0.5; // Minimum scale factor
     const maxScale = 3;  // Maximum scale factor (you can adjust this as needed)
-  
+
     // Zoom functionality
     image.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const zoomFactor = 1.1;
-      if (e.deltaY < 0) {
-        // Zoom in
-        scale = Math.min(scale * zoomFactor, maxScale);
-      } else {
-        // Zoom out
-        scale = Math.max(scale / zoomFactor, minScale);
-      }
-      image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        e.preventDefault();
+        const zoomFactor = 1.1;
+        if (e.deltaY < 0) {
+            // Zoom in
+            scale = Math.min(scale * zoomFactor, maxScale);
+        } else {
+            // Zoom out
+            scale = Math.max(scale / zoomFactor, minScale);
+        }
+        image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
     });
-  
+
     // Drag functionality
-    image.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      startX = e.clientX - translateX;
-      startY = e.clientY - translateY;
-      image.classList.add('grabbing');
+    image.addEventListener('pointerdown', (e) => {
+        isDragging = true;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+        image.setPointerCapture(e.pointerId);
+        image.classList.add('grabbing');
     });
-  
-    image.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      translateX = e.clientX - startX;
-      translateY = e.clientY - startY;
-      image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+    image.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        translateX = (e.clientX - startX);
+        translateY = (e.clientY - startY);
+        image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
     });
-  
-    image.addEventListener('mouseup', () => {
-      isDragging = false;
-      image.classList.remove('grabbing');
+
+    image.addEventListener('pointerup', (e) => {
+        isDragging = false;
+        image.releasePointerCapture(e.pointerId);
+        image.classList.remove('grabbing');
+    });
+
+    image.addEventListener('pointercancel', (e) => {
+        isDragging = false;
+        image.releasePointerCapture(e.pointerId);
+        image.classList.remove('grabbing');
     });
 }
-    
 $(document).ready(
     () => {
         console.log($.fn.jquery); // Check jQuery version
