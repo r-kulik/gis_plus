@@ -352,10 +352,13 @@ def get_file_text(request):
                 file_name = file_obj.internalStoragePath
             file_path = os.path.join('temp_files', file_name)
             # print(file_path)
-            if os.path.exists(file_path):
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    file_text = f.read()
-                return JsonResponse({'file_text': file_text})
+            try:
+                if os.path.exists(file_path):
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        file_text = f.read()
+                    return JsonResponse({'file_text': file_text})
+            except Exception:
+                return JsonResponse({'file_text': "File is unreadable"})
             else:
                 print("Not Found")
                 print(file_path)
