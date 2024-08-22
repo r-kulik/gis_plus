@@ -5,6 +5,8 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import pandas as pd
 import lasio
+import io
+
 
 try:
     from Las_handler.LasEncoder import LasEncoder
@@ -195,12 +197,18 @@ class SuperLas:
 
             plt.gca().invert_yaxis()  # Invert the y-axis to show depth from top to bottom
             plt.tight_layout()
-            output_image_path = f"static/{file_name.split('.')[0]}.jpg"
-            plt.savefig(output_image_path, dpi=90)
+            img = io.BytesIO()
+            plt.savefig(img, format='png')
+            img.seek(0)  # Reset the stream position to the beginning
+
+            plt.close(fig)
             
-            return f"{file_name.split('.')[0]}.jpg"
+            return img
         except:
-            return "sad_cat.jpg"
+            p = "exphoto.jpg"
+            with open(p, "rb") as f:
+                img = io.BytesIO(f.read())
+            return img
 
 
         
