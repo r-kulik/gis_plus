@@ -212,7 +212,8 @@ class SuperLas:
     
     def translate(self, file):
         file_name = f"temp_files/{file}"
-        new_name = f"{hashlib.md5(file.encode("utf-8")).hexdigest()}.las"
+        # print(hashlib.md5(file.encode("utf-8")).hexdigest())
+        new_name = f"{hashlib.md5(file.encode('utf-8')).hexdigest()}.las"
         las = lasio.read(file_name)
         names = las.curves.keys()
         js = JsonController()
