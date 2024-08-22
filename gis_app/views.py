@@ -306,7 +306,7 @@ def save_to_database(request):
                 datetime=datetime.strptime(file_entry['datetime'], '%Y-%m-%d %H:%M:%S'),
                 company=company,
                 well=well,
-                internalStoragePath=file_entry['processedFilePath'],
+                internalStoragePath=file_entry['processedFilePath'].strip(),
                 internalHash=file_hash
             )
 
@@ -384,7 +384,10 @@ def get_image_url(request):
                 file_obj = Files.objects.get(internalStoragePath=file_name)
 
             internal_storage_path = file_obj.internalStoragePath
-            img_io = create_curve_image_by_file_name(internal_storage_path)
+            print(f"internal_storage_path={internal_storage_path}")
+
+            processer = SuperLas()
+            img_io = processer.get_image(internal_storage_path)
             media_root = os.path.join('media', 'temp_images')
             image_name = f'{internal_storage_path}.jpg'
             image_path = os.path.join(media_root, image_name)

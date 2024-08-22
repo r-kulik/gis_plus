@@ -172,8 +172,7 @@ $(document).ready(
             }).catch(error => {
                 console.error('Error fetching file content or image:', error);
             });
-        });
-    
+        }); 
 
         $('#windowOverlay').on('click', function(event) {
             if (event.target === this) {
