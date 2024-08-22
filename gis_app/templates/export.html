@@ -14,12 +14,12 @@
 
     <script type="text/x-jquery-tmpl" id="fileRowTemplate">
         <tr data-file-id="${fileId}" data-file-name="${internalStoragePath}">
-            <td>
+            <td class="ignore-click">
                 <div class="checkbox-wrapper">
                     <input type="checkbox"/>
                 </div>
             </td>
-            <td>${fileId}</td>
+            <td class="cr">${fileId}</td>
             <td>${filePath}</td>
             <td>${fileVersion}</td>
             <td>${startDepth}</td>
