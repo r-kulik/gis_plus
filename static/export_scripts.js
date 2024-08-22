@@ -175,7 +175,8 @@ $(document).ready(
         }); 
 
         $('#windowOverlay').on('click', function(event) {
-            if (event.target === this) {
+            var windows = document.querySelectorAll('div.' + "window-container");
+            if (windows.length > 0) { 
                 $(this).hide();
                 $('#windowContent').empty();
             }
