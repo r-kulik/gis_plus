@@ -349,7 +349,7 @@ def downloadFiles(request):
                     if in_english:
                         processer = SuperLas()
                         file_path = processer.translate(file_path)  # Translate the file path if in_english is True
-
+                        file_path = os.path.join('temp_files', file_path)
                     temp_zip.write(file_path, original_name)
                 else:
                     print(f"File not found: {file_path}")
