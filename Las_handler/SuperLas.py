@@ -5,6 +5,8 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import pandas as pd
 import lasio
+import io
+
 
 try:
     from Las_handler.LasEncoder import LasEncoder
@@ -195,21 +197,46 @@ class SuperLas:
 
             plt.gca().invert_yaxis()  # Invert the y-axis to show depth from top to bottom
             plt.tight_layout()
-            output_image_path = f"static/{file_name.split('.')[0]}.jpg"
-            plt.savefig(output_image_path, dpi=90)
+            img = io.BytesIO()
+            plt.savefig(img, format='png')
+            img.seek(0)  # Reset the stream position to the beginning
+
+            plt.close(fig)
             
-            return f"{file_name.split('.')[0]}.jpg"
+            return img
         except:
-            return "sad_cat.jpg"
+            p = "file1.jpg"
+            with open(p, "rb") as f:
+                img = io.BytesIO(f.read())
+            return img
+    
+    def translate(self, file):
+        file_name = f"temp_files/{file}"
+        new_name = f"{hashlib.md5(file.encode("utf-8")).hexdigest()}.las"
+        las = lasio.read(file_name)
+        names = las.curves.keys()
+        js = JsonController()
+
+        eng = [names[0]] + [js.get_eng_origin_mnemonic(i) for i in names[1::]]
+        
+        for i in range(len(eng)):
+            las.curves[i].mnemonic=eng[i]
+        with open(f"temp_files/{new_name}", "w" ,encoding="utf-8") as file:    
+            las.write(file)
+        
+        return new_name
+
+
 
 
         
 if __name__ == "__main__":
     c = SuperLas()
+    print(c.translate("10_IK.las"))
     #c.get_image("42.las")
     """c = SuperLas()
         print(c.process_file1("15_2.las"))"""
-    import os
+    """import os
     relative_path = os.path.join('temp_files')
 
     absolute_path = os.path.abspath(relative_path)
@@ -218,4 +245,4 @@ if __name__ == "__main__":
     # Iterate through the files in the directory
     for filename in os.listdir(absolute_path):
         print(filename)
-        print(c.process_file1(filename))
+        print(c.process_file1(filename))"""
