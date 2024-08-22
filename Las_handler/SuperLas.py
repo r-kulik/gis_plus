@@ -2,6 +2,7 @@ import hashlib
 import random 
 import re
 from datetime import datetime
+import traceback
 import matplotlib.pyplot as plt
 import pandas as pd
 import lasio
@@ -161,6 +162,7 @@ class SuperLas:
     
     def get_image(self, file_name):
         try:
+            file_name = file_name.strip()
             # Step 1: Read the LAS file
             las_file_path = f"temp_files/{file_name}"
             las = lasio.read(las_file_path)
@@ -204,8 +206,9 @@ class SuperLas:
             plt.close(fig)
             
             return img
-        except:
-            p = "file1.jpg"
+        except Exception as e:
+            print(traceback.format_exc())
+            p = "exphoto.png"
             with open(p, "rb") as f:
                 img = io.BytesIO(f.read())
             return img
