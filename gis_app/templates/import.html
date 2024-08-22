@@ -13,7 +13,7 @@
 <body>
 
     <script type="text/x-jquery-tmpl" id="fileRowTemplate">
-        <tr>
+        <tr data-file-name="${originalFilePath}">
             <td>
                 <div class="checkbox-wrapper">
                     <input type="checkbox" ${isCheckboxDisabled ? 'disabled' : ''}/>
@@ -37,6 +37,18 @@
             <td style="display: none;" class='fileVersionHolder'> ${fileVersion} </td>
         </tr>
     </script>
+
+    <script type="text/x-jquery-tmpl" id="fileContentTemplate">
+        <div class="window-container">
+            <div class="scrollable-window">
+                <pre>${fileText}</pre>
+            </div>
+            <div class="las-file-graphs">
+                <img id="zoomable-image" class="zoomable-image" src="${imageUrl}" alt="Zoomable Image">
+            </div>
+        </div>
+    </script>
+
     {% include 'header.html' %}
 
     <main class="content">
@@ -71,5 +83,10 @@
             </tbody>
         </table>
     </main>
+
+    <div class="window-overlay" id="windowOverlay">
+        <div id="windowContent"></div>
+    </div>
+
 </body>
 </html>
