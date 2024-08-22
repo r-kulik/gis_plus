@@ -317,11 +317,14 @@ def save_to_database(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
+
+
 @csrf_exempt
 def downloadFiles(request):
     if request.method == 'POST':
         print(request.POST)
         selected_files = request.POST.getlist('files[]')
+        in_english = request.POST.get('in_english', False)  # Check if the request is for English translation
         print(f"selected_files = {selected_files}")
         zip_filename = 'exported_files.zip'
         temp_zip = zipfile.ZipFile(zip_filename, 'w')
@@ -342,6 +345,10 @@ def downloadFiles(request):
                         original_name = f"{base}_{name_counter[original_name]}{ext}"
                     else:
                         name_counter[original_name] = 0
+
+                    if in_english:
+                        processer = SuperLas()
+                        file_path = processer.translate(file_path)  # Translate the file path if in_english is True
 
                     temp_zip.write(file_path, original_name)
                 else:
