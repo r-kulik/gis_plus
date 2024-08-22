@@ -8,6 +8,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
     <script src="{% static 'export_scripts.js' %}"></script>
+    <script src="{% static 'images_text.js' %}"></script>
 </head>
 <body>
 
@@ -31,36 +32,50 @@
         </tr>
     </script>
 
-    
+    <script type="text/x-jquery-tmpl" id="fileContentTemplate">
+        <div class="window-container">
+            <div class="scrollable-window">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div>
+            <div class="las-file-graphs">
+                <img id="zoomable-image" class="zoomable-image" src="https://via.placeholder.com/2000x2000" alt="Zoomable Image">
+            </div>
+        </div>
+    </script>
+
     {% include 'header.html' %}
     
     <main class="content">
 
         <div class="filter-block">
             <button class="search-button" id="searchButton">Найти</button>
-            <button class="search-button" id="clearButton">Очистить</button>
+            <a href="/export/">
+                <button class="search-button" id="clearButton">Очистить</button>
+            </a>
             <button class="export-button" id="exportButton">Экспортировать</button>
-
+            
             <table>
-                <!-- Исправить ширину. Двойные поля должны подстраиваться под ширину одинарного -->
-
                 <tr>
                     <td>
                         <input type="text" class="file-filter" id="fileFilter" placeholder="Название файла">
                     </td>
-
+                    
                     <td>
                         <input list="fieldFilterList"  class="field-filter" id="fieldFilter" placeholder="Месторождение">
                         <datalist id="fieldFilterList">
                         </datalist>
                     </td>
-
+                    
                     <td>
                         <input list="wellNumberFilterList"  class="well-number-filter" id="wellNumberFilter" placeholder="Номер скважины">
                         <datalist id="wellNumberFilterList">
                         </datalist>
                     </td>
-
+                    
                     <td>
                         <div class="filter-row" style="display: flex;">
                             <input type="text" class="start-measure-from-depth-filter" id="startMeasureFromDepthFilter" placeholder="Начало измерения с глубины">
@@ -77,19 +92,22 @@
                             <input type="text" class="finish-measure-till-depth-filter" id="finishMeasureTillDepthFilter" placeholder="Конец измерения до глубины">
                         </div>
                     </td>
-
+                    
                     <td>
                         <input list="companiesList"  class="companies-filter" id="companiesFilter" placeholder="Компания">
                         <datalist id="companiesList">
                         </datalist>
                     </td>
-
+                    
                     <td>
                         <input list="metricsList"  class="metrics-filter" id="metricsFilter" placeholder="Метрики">
                         <datalist id="metricsList">
-                            <!--- <option value="pp1"> -->
-                        </datalist>
-                    </td>
+                            <option value="W3">
+                                <option value="p1"> 
+                                <option value="wP2">
+                                    <option value="P5"> 
+                                    </datalist>
+                                </td>
 
                     <td>
                         <div class="filter-row" style="display: flex;">
@@ -120,8 +138,12 @@
             </thead>
             <tbody>
             </tbody>
-
+            
         </table>
     </main>
+
+    <div class="window-overlay" id="windowOverlay">
+        <div id="windowContent"></div>
+    </div>
 </body>
 </html>

@@ -1,0 +1,38 @@
+# Ignore virtual environment
+venv/
+*.env
+
+# Ignore Python byte code files
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Python cache files
+__pycache__/
+
+# Ignore Django's local settings
+local_settings.py
+
+# Ignore database files
+*.sqlite3
+
+# Ignore media files (if not needed in the container)
+media/
+
+# Ignore static files (if not needed in the container)
+static/
+
+# Ignore logs
+logs/
+
+# Ignore IDE and editor specific files
+.idea/
+.vscode/
+
+# Ignore version control directories
+.git/
+.svn/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db

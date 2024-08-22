@@ -56,6 +56,33 @@ input[type=checkbox] {
     margin: 0 auto;
 }
 
+.scrollable-window {
+    overflow-y: auto;
+    padding: 0 1vw;
+    width: 50%;
+    font-size: 1.25vw;
+    background-color: #f9f9f9;
+}
+
+.las-file-graphs {
+    width: 50%;
+    height: auto;
+    object-fit: cover;
+    overflow: auto;
+    position: relative;
+}
+
+.zoomable-image {
+    width: 100%;
+    height: auto;
+    transition: transform 0.25s ease;
+    cursor: grab;
+}
+
+.zoomable-image.grabbing {
+    cursor: grabbing;
+}
+
 .checkbox-wrapper {
     text-align: center;
     vertical-align: middle;
@@ -81,7 +108,7 @@ input[type=checkbox] {
 .files-table {
     font-size: 1vw;
     width: 100%;
-    margin: 1em;
+    margin: 1em auto;
     border-collapse: collapse;
     table-layout: auto;
 }
@@ -119,6 +146,29 @@ input[type=checkbox] {
 .page-selection-button:hover {
     background-color: #006BC0;
 }
+
+.window-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: auto;
+    height: 100%;
+    background: rgba(4, 3, 3, 0.5);
+}
+
+.window-container {
+    display: flex;
+    width: 80%;
+    height: 80%;
+    border-radius: .5vw;
+    background: white;
+    padding: 2vw;
+    box-shadow: 0 0 1vw rgba(0, 0, 0, 0.5);
+    align-items: center;
+}
+
 
 .page-selection-button-active {
     font-size: 1vw;

@@ -1,6 +1,7 @@
 from datetime import datetime
 import hashlib
 import zipfile
+from django.conf import settings
 from django.shortcuts import render # type: ignore
 from django.http import HttpResponse, HttpRequest, JsonResponse # type: ignore
 from django.views.decorators.csrf import csrf_exempt # type: ignore
@@ -15,6 +16,8 @@ import string
 from Las_handler.SuperLas import SuperLas
 from django.forms.models import model_to_dict
 import json
+from PIL import Image
+import io
 
 
 def hello_world(request):
@@ -354,3 +357,95 @@ def downloadFiles(request):
             return response
 
     return HttpResponse('Invalid request', status=400)
+
+
+
+def create_curve_image_by_file_name(file_name):
+    # Mockup function to create a blank image
+    img = Image.new('RGB', (600, 400), color = (73, 109, 137))
+    img_io = io.BytesIO()
+    img.save(img_io, format='JPEG')
+    img_io.seek(0)
+    return img_io
+
+@csrf_exempt
+def get_image_url(request):
+    if request.method == 'POST':
+        file_name = request.POST.get('file_name')
+        if not file_name:
+            return JsonResponse({'error': 'File name is required'}, status=400)
+
+        # Generate the image
+        img_io = create_curve_image_by_file_name(file_name)
+
+        # Save the image to a temporary location
+        media_root = os.path.join(settings.MEDIA_ROOT, 'temp_images')
+        if not os.path.exists(media_root):
+            os.makedirs(media_root)
+
+        image_path = os.path.join(media_root, f'{file_name}.jpg')
+        with open(image_path, 'wb') as f:
+            f.write(img_io.getvalue())
+
+        # Construct the URL of the saved image
+        image_url = f'/media/temp_images/{file_name}.jpg'
+
+        return JsonResponse({'image_url': image_url})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+@csrf_exempt
+def get_internal_storage_path(request):
+    if request.method == 'POST':
+        file_id = request.POST.get('file_id')
+        if not file_id:
+            return JsonResponse({'error': 'File ID is required'}, status=400)
+
+        try:
+            file_obj = Files.objects.get(fileId=file_id)
+            internal_storage_path = file_obj.internalStoragePath
+            return JsonResponse({'internal_storage_path': internal_storage_path})
+        except Files.DoesNotExist:
+            return JsonResponse({'error': 'File not found'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@csrf_exempt
+def get_file_text_by_name(request):
+    if request.method == 'POST':
+        file_name = request.POST.get('file_name')
+        if not file_name:
+            return JsonResponse({'error': 'File name is required'}, status=400)
+
+        file_path = os.path.join('temp_files', file_name.strip())
+        if os.path.exists(file_path):
+            with open(file_path, 'r', encoding='utf-8') as f:
+                file_text = f.read()
+            return JsonResponse({'file_text': file_text})
+        else:
+            return JsonResponse({'error': 'File not found'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@csrf_exempt
+def get_file_text_by_id(request):
+    if request.method == 'POST':
+        file_id = request.POST.get('file_id')
+        if not file_id:
+            return JsonResponse({'error': 'File ID is required'}, status=400)
+
+        try:
+            file_obj = Files.objects.get(fileId=file_id)
+            file_path = os.path.join('temp_files', file_obj.internalStoragePath.strip())
+            if os.path.exists(file_path):
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    file_text = f.read()
+                return JsonResponse({'file_text': file_text})
+            else:
+                return JsonResponse({'error': 'File not found'}, status=404)
+        except Files.DoesNotExist:
+            return JsonResponse({'error': 'File not found'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+

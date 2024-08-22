@@ -1,7 +1,4 @@
-
 function addFilesToTable(responseData) {
-    ;
-
     console.log('Response Data:', responseData); // Check the response data
     console.log(responseData.files)
 
@@ -36,9 +33,6 @@ function sendRequestToGetFiles(){
         finishYearFilter: $('#finishYearFilter').val()
     };
 
-
-    
-
     $.ajax(
         {
             url: '/exportFiles/',
@@ -55,17 +49,16 @@ function sendRequestToGetFiles(){
     );
 }
 
-
 function exportSelectedFiles() {
     let selectedFiles = [];
 
     // Gather all selected file IDs
     $('#fileTable tbody input:checked').each(function() {
-        selectedFiles.push($(this).closest('tr').find('td:nth-child(2)').text()); // Assuming fileId is in the second column
+        selectedFiles.push($(this).closest('tr').find('td:nth-child(2)').text());
     });
 
     if (selectedFiles.length === 0) {
-        alert('No files selected for export.');
+        alert('Не выбрано ни одного файла для сохранения');
         return;
     }
 
@@ -97,11 +90,75 @@ function exportSelectedFiles() {
     });
 }
 
+document.addEventListener('DOMContentLoaded', (event) => {
+    const image = document.getElementById('zoomable-image');
+    let isDragging = false;
+    let startX, startY;
+    let translateX = 0, translateY = 0;
+    let scale = 1;
+    const minScale = 0.5; // Minimum scale factor
+    const maxScale = 3;  // Maximum scale factor (you can adjust this as needed)
+  
+    // Zoom functionality
+    image.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = 1.1;
+      if (e.deltaY < 0) {
+        // Zoom in
+        scale = Math.min(scale * zoomFactor, maxScale);
+      } else {
+        // Zoom out
+        scale = Math.max(scale / zoomFactor, minScale);
+      }
+      image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    });
+  
+    // Drag functionality
+    image.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+      image.classList.add('grabbing');
+    });
+  
+    image.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    });
+  
+    image.addEventListener('mouseup', () => {
+      isDragging = false;
+      image.classList.remove('grabbing');
+    });
+});
+
 $(document).ready(
     () => {
         console.log($.fn.jquery); // Check jQuery version
         console.log(typeof $.tmpl); // Check if $.tmpl is defined
         $('#searchButton').on('click', sendRequestToGetFiles);
         $('#exportButton').on('click', exportSelectedFiles);
+
+        // // Add click event listener to table rows
+        // $('#fileTable tbody').on('click', 'tr', function() {
+        //     // Check if the clicked row is not already expanded
+        //     if (!$(this).next().hasClass('window-container') && !$(this).hasClass('window-container')) {
+        //         $('#fileContentTemplate').tmpl().insertAfter($(this));
+        //     }
+        // });
+
+        $('#fileTable tbody').on('click', 'tr', function() {
+            var templateContent = $('#fileContentTemplate').html();
+            $('#windowContent').html(templateContent);
+            $('#windowOverlay').show();
+        });
+
+        $('#windowOverlay').on('click', function(event) {
+            if (event.target === this) {
+                $(this).hide();
+            }
+        });
     }
 );
